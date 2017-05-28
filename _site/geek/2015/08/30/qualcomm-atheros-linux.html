@@ -1,0 +1,175 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Justonepixel.com - Losing connectivity after a Chrome request</title>
+        
+        <meta name="author" content="Michel">
+
+        <!-- Enable responsive viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+
+        <!-- atom & rss feed -->
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    </head>
+
+    <body>
+    <div class="wrapper container">
+    <div class="row">
+        <div class="span1 offset1">
+            <div class="navbar">
+                <ul>
+                    <li><a href="/"><img src="/assets/themes/justonepixel/img/home.png" /></a></li>
+                    <li><a href="/about.html"><img src="/assets/themes/justonepixel/img/about.png" /></a></li>
+                    <li><a href="/contact.html"><img src="/assets/themes/justonepixel/img/contact.png" /></a></li>
+                    <li><a href="/archive.html"><img src="/assets/themes/justonepixel/img/archive.png" /></a></li>
+                    <li><a href="/search.html"><img src="/assets/themes/justonepixel/img/search.png" /></a></li>
+                    <li><a href="https://github.com/neumino"><img src="/assets/themes/justonepixel/img/github.png" /></a></li>
+                    <li><a href="http://www.strava.com/athletes/1952902"><img src="/assets/themes/justonepixel/img/strava.png" /></a></li>
+                    <li><a href="https://twitter.com/neumino"><img src="/assets/themes/justonepixel/img/twitter.png" /></a></li>
+                    <li><a href="https://www.facebook.com/michel.tu"><img src="/assets/themes/justonepixel/img/facebook.png" /></a></li>
+                    <li><a href="http://www.linkedin.com/in/tumichel"><img src="/assets/themes/justonepixel/img/linkedin.png" /></a></li>
+                    <li><a href="https://plus.google.com/u/0/111745051853861893359/posts"><img src="/assets/themes/justonepixel/img/googleplus.png" /></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="span9">
+
+            <div class="content">
+                
+
+<div class="post">
+<i class="icon-post"></i>
+
+    <h2>
+        <a href="/geek/2015/08/30/qualcomm-atheros-linux" class="title">Losing connectivity after a Chrome request</a>
+        <span class="meta_info">posted on 30 August 2015</span>
+    </h2>
+
+    
+<p>When I upgraded my kernel from 4.0.7-2 to 4.1.4.1 (and more recently to 4.1.6-1)
+I had a really annoying bug and since it wasted some of my time, I hope that this
+post may help someone.</p>
+
+<p>After my 4.1 kernel update, I would start connected to the internet. I could ping any server,
+use <code class="highlighter-rouge">wget</code>, but as soon as I would make a request on Chromium or Firefox, I would “lose
+connectivity” after a few seconds. By loosing connectivity, the pings would timeout or fail with “Destination
+Host Unreachable”. Once of the reason I had a hard time finding the reason is that I had
+no errors reported by the kernel or the driver. The only way to get back a connectivity was to
+take down the interface and bring it back up.</p>
+
+<p>Eventually, everything boiled down to my Qualcomm Atheros AR8161 driver. Increasing the MTU
+to 9000 fixed my problem as described on this <a href="https://bugs.archlinux.org/task/44315">archlinux bug</a></p>
+
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-folder-open"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/categories.html#Geek-ref">
+    		Geek <span>43</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+      
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-tags"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/tags.html#archlinux-ref">archlinux <span>8</span></a></li>
+     
+    	<li><a href="/tags.html#qualcomm-ref">qualcomm <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#atheros AR8161-ref">atheros AR8161 <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#bug-ref">bug <span>2</span></a></li>
+    
+  
+
+
+
+    </ul>
+      
+
+    
+    <hr>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog.justonepixel.com -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:468px;height:60px"
+     data-ad-client="ca-pub-5366199723595534"
+     data-ad-slot="2620298801"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <hr>
+    <div class="pagination">
+        <ul>
+            
+            <li class="prev"><a href="/geek/2015/08/15/rethinkdbdash-client-backtraces" title="Rethinkdbdash and client side backtraces">&larr; Previous</a></li>
+            
+            <li><a href="/archive.html">Archive</a></li>
+            
+            <li class="next"><a href="/geek/2015/09/05/docker-network" title="Docker without sudo, network issues">Next &rarr;</a></li>
+            
+        </ul>
+    </div>
+    <hr>
+</div>
+
+
+            </div>
+
+            <footer>
+                <p>Michel Tu
+                &mdash;
+                <a href="mailto:michel@justonepixel.com">michel@justonepixel.com</a>
+                &mdash;
+                <a href="http://blog.justonepixel.com">http://blog.justonepixel.com</a></p>
+            </footer>
+
+        </div>
+    </div>
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+		
+    </body>
+</html>
+

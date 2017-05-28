@@ -1,0 +1,263 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Justonepixel.com - Incomplete kernel update</title>
+        
+        <meta name="author" content="Michel">
+
+        <!-- Enable responsive viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+
+        <!-- atom & rss feed -->
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    </head>
+
+    <body>
+    <div class="wrapper container">
+    <div class="row">
+        <div class="span1 offset1">
+            <div class="navbar">
+                <ul>
+                    <li><a href="/"><img src="/assets/themes/justonepixel/img/home.png" /></a></li>
+                    <li><a href="/about.html"><img src="/assets/themes/justonepixel/img/about.png" /></a></li>
+                    <li><a href="/contact.html"><img src="/assets/themes/justonepixel/img/contact.png" /></a></li>
+                    <li><a href="/archive.html"><img src="/assets/themes/justonepixel/img/archive.png" /></a></li>
+                    <li><a href="/search.html"><img src="/assets/themes/justonepixel/img/search.png" /></a></li>
+                    <li><a href="https://github.com/neumino"><img src="/assets/themes/justonepixel/img/github.png" /></a></li>
+                    <li><a href="http://www.strava.com/athletes/1952902"><img src="/assets/themes/justonepixel/img/strava.png" /></a></li>
+                    <li><a href="https://twitter.com/neumino"><img src="/assets/themes/justonepixel/img/twitter.png" /></a></li>
+                    <li><a href="https://www.facebook.com/michel.tu"><img src="/assets/themes/justonepixel/img/facebook.png" /></a></li>
+                    <li><a href="http://www.linkedin.com/in/tumichel"><img src="/assets/themes/justonepixel/img/linkedin.png" /></a></li>
+                    <li><a href="https://plus.google.com/u/0/111745051853861893359/posts"><img src="/assets/themes/justonepixel/img/googleplus.png" /></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="span9">
+
+            <div class="content">
+                
+
+<div class="post">
+<i class="icon-post"></i>
+
+    <h2>
+        <a href="/geek/2016/10/30/incomplete-kernel-update" class="title">Incomplete kernel update</a>
+        <span class="meta_info">posted on 30 October 2016</span>
+    </h2>
+
+    
+<p><em>These are quick notes about fixing my system after an incomplete kernel update.</em></p>
+
+<p>During a system update, my workstation suddenly shut down (hardware failure). I
+was working on something else during the update, so I had no idea when the
+update was aborted. When I tried to boot again, I was greeted with this error:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Warning: /lib/modules/4.8.4-1-ARCH/modules.devname not found - ignoring.
+starting version 231
+ERROR: device 'UUID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' not found, Skipping fsck.
+ERROR: Unable to find root device 'UUID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'.
+You are being dropped to a recovery shell
+    Type 'exit' to try and continue booting
+sh: can't access tty: job control turned off
+[rootfs ]#
+</code></pre>
+</div>
+
+<p>At that time I thought that one of my harddrive died. Digging a bit into it,
+the partition that couldn’t be found was an encrypted one. So I thought that
+maybe my fstab got somehow corrupted. I didn’t have access to a shell after
+booting as the keyboard was not working, so I just booted with a live usb key.
+My disks are all encrypted, so the first step was to decrypt them:</p>
+
+<p>Confirm that they are indeed crypted:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>blkid | grep crypto
+</code></pre>
+</div>
+
+<p>Decrypt/mount the partition:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>cryptsetup luksOpen /dev/sdc2/ crypt
+</code></pre>
+</div>
+
+<p>You then can’t just mount <code class="highlighter-rouge">/dev/mapper/crypt</code>. If you try, you’ll get:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mount /dev/mapper/crypthome /mnt/crypt
+mount: unknown filesystem type 'LVM2_member'
+</code></pre>
+</div>
+
+<p>Find the group of your volume (mine was main):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>vgscan
+</code></pre>
+</div>
+
+<p>Find the name of the volume (mine was root):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>lvs
+</code></pre>
+</div>
+
+<p>Mount it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mount /dev/main/root /mnt
+</code></pre>
+</div>
+
+<p>In my case, <code class="highlighter-rouge">/boot</code> is not encrypted, so I also had to mount it to be able to
+look at my kernel.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mount /dev/sdc1 /mnt/boot
+</code></pre>
+</div>
+
+<p>Then I just used chrooted:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>arch-chroot /mnt
+</code></pre>
+</div>
+
+<p>I thought that the issue might have been in the initial ramdisk environment, so I just ran:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mkinitcpio -p linux
+</code></pre>
+</div>
+
+<p>I was greeted with quite a few warnings that some modules were not found. But
+all the modules for encryption was present, so I decided to just reboot.
+Some progress were made: I could decrypt my disk, but was then greeted
+with:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mount: unknown filesystem type 'ext4'
+</code></pre>
+</div>
+
+<p>I booted on the usb key again, and looked a bit at my modules. That’s when I found
+that <code class="highlighter-rouge">uname -r</code> was giving me an old kernel version. Trying to reinstall the <code class="highlighter-rouge">linux</code>
+package was returning an error because the <code class="highlighter-rouge">desc</code> file was missing. I guess my
+update was interrupted during the kernel update.</p>
+
+<p>Removing the package and re-installing it did the trick. Note that <code class="highlighter-rouge">pacman -S --force</code>
+was not enougth to prevent pacman from complaining about the missing files.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>pacman -R linux
+pacman -Sy linux
+mkinitcpio -p linux
+</code></pre>
+</div>
+
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-folder-open"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/categories.html#Geek-ref">
+    		Geek <span>43</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+      
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-tags"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/tags.html#archlinux-ref">archlinux <span>8</span></a></li>
+     
+    	<li><a href="/tags.html#kernel-ref">kernel <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#encryption-ref">encryption <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#disk-ref">disk <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+      
+
+    
+    <hr>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog.justonepixel.com -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:468px;height:60px"
+     data-ad-client="ca-pub-5366199723595534"
+     data-ad-slot="2620298801"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <hr>
+    <div class="pagination">
+        <ul>
+            
+            <li class="prev"><a href="/life/2016/10/08/my-rethinkdb-story" title="My RethinkDB story">&larr; Previous</a></li>
+            
+            <li><a href="/archive.html">Archive</a></li>
+            
+            <li class="next"><a href="/geek/2016/11/09/force-update-ttf-dejavu" title="Force update ttf-dejavu">Next &rarr;</a></li>
+            
+        </ul>
+    </div>
+    <hr>
+</div>
+
+
+            </div>
+
+            <footer>
+                <p>Michel Tu
+                &mdash;
+                <a href="mailto:michel@justonepixel.com">michel@justonepixel.com</a>
+                &mdash;
+                <a href="http://blog.justonepixel.com">http://blog.justonepixel.com</a></p>
+            </footer>
+
+        </div>
+    </div>
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+		
+    </body>
+</html>
+

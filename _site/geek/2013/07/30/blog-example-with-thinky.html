@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Justonepixel.com - Blog example with Thinky</title>
+        
+        <meta name="author" content="Michel">
+
+        <!-- Enable responsive viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+
+        <!-- atom & rss feed -->
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    </head>
+
+    <body>
+    <div class="wrapper container">
+    <div class="row">
+        <div class="span1 offset1">
+            <div class="navbar">
+                <ul>
+                    <li><a href="/"><img src="/assets/themes/justonepixel/img/home.png" /></a></li>
+                    <li><a href="/about.html"><img src="/assets/themes/justonepixel/img/about.png" /></a></li>
+                    <li><a href="/contact.html"><img src="/assets/themes/justonepixel/img/contact.png" /></a></li>
+                    <li><a href="/archive.html"><img src="/assets/themes/justonepixel/img/archive.png" /></a></li>
+                    <li><a href="/search.html"><img src="/assets/themes/justonepixel/img/search.png" /></a></li>
+                    <li><a href="https://github.com/neumino"><img src="/assets/themes/justonepixel/img/github.png" /></a></li>
+                    <li><a href="http://www.strava.com/athletes/1952902"><img src="/assets/themes/justonepixel/img/strava.png" /></a></li>
+                    <li><a href="https://twitter.com/neumino"><img src="/assets/themes/justonepixel/img/twitter.png" /></a></li>
+                    <li><a href="https://www.facebook.com/michel.tu"><img src="/assets/themes/justonepixel/img/facebook.png" /></a></li>
+                    <li><a href="http://www.linkedin.com/in/tumichel"><img src="/assets/themes/justonepixel/img/linkedin.png" /></a></li>
+                    <li><a href="https://plus.google.com/u/0/111745051853861893359/posts"><img src="/assets/themes/justonepixel/img/googleplus.png" /></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="span9">
+
+            <div class="content">
+                
+
+<div class="post">
+<i class="icon-post"></i>
+
+    <h2>
+        <a href="/geek/2013/07/30/blog-example-with-thinky" class="title">Blog example with Thinky</a>
+        <span class="meta_info">posted on 30 July 2013</span>
+    </h2>
+
+    
+<p>I have recently been working on <a href="https://github.com/neumino/thinky">thinky</a> (a JavaScript ORM for RethinkDB), and I just finished adding a new example on how to use thinky.</p>
+
+<ul>
+  <li><a href="http://thinky-blog.justonepixel.com">Demo</a></li>
+  <li><a href="https://github.com/neumino/thinky/tree/master/examples/blog">Code source</a></li>
+</ul>
+
+<p>This example is a blog built with Node, Thinky, Express and AngularJS. The purpose of this example is to illustrate how to use Thinky so I will not spend time writing about AngularJS or Express. If people are interested, I wouldn’t mind writing about it, but I added some comments in the code, so understanding how the stack works shouldn’t be too hard (especially since these frameworks are quite user-friendly).</p>
+
+<p>There are two files that use Thinky:</p>
+
+<ul>
+  <li><a href="https://github.com/neumino/thinky/blob/master/examples/blog/thinky.js">thinky.js</a></li>
+  <li><a href="https://github.com/neumino/thinky/blob/master/examples/blog/routes/api.js">routes/api.js</a></li>
+</ul>
+
+<h3 id="a-hrefhttpsgithubcomneuminothinkyblobmasterexamplesblogthinkyjsthinkyjsa"><a href="https://github.com/neumino/thinky/blob/master/examples/blog/thinky.js">thinky.js</a></h3>
+
+<p>In this file, we are just loading the module with <code class="highlighter-rouge">require()</code> and call <code class="highlighter-rouge">.init()</code> which will create a pool of connections that will be used to make queries.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">thinky</span><span class="p">.</span><span class="nx">init</span><span class="p">({</span>
+    <span class="na">host</span><span class="p">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">host</span><span class="p">,</span>
+    <span class="na">port</span><span class="p">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">port</span><span class="p">,</span>
+    <span class="na">db</span><span class="p">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">db</span>
+<span class="p">});</span>
+</code></pre>
+</div>
+
+<h3 id="a-hrefhttpsgithubcomneuminothinkyblobmasterexamplesblogroutesapijsroutesapijsa"><a href="https://github.com/neumino/thinky/blob/master/examples/blog/routes/api.js">routes/api.js</a></h3>
+
+<p>This file contains all the interesting things about thinky.</p>
+
+<p><strong>Models</strong></p>
+
+<p>We first create models with <code class="highlighter-rouge">thinky,createModel()</code></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">Post</span> <span class="o">=</span> <span class="nx">thinky</span><span class="p">.</span><span class="nx">createModel</span><span class="p">(</span><span class="s1">'Post'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">id</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="na">title</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="na">text</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="na">authorId</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="na">date</span><span class="p">:</span> <span class="p">{</span><span class="na">_type</span><span class="p">:</span> <span class="nb">Number</span><span class="p">,</span> <span class="na">default</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="p">}}</span>
+<span class="p">});</span>
+<span class="kd">var</span> <span class="nx">Author</span> <span class="o">=</span> <span class="nx">thinky</span><span class="p">.</span><span class="nx">createModel</span><span class="p">(</span><span class="s1">'Author'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">id</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="na">name</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="na">email</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="na">website</span><span class="p">:</span> <span class="nb">String</span>
+<span class="p">});</span>
+<span class="kd">var</span> <span class="nx">Comment</span> <span class="o">=</span> <span class="nx">thinky</span><span class="p">.</span><span class="nx">createModel</span><span class="p">(</span><span class="s1">'Comment'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">id</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="na">name</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="na">comment</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="na">postId</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="na">date</span><span class="p">:</span> <span class="p">{</span><span class="na">_type</span><span class="p">:</span> <span class="nb">Number</span><span class="p">,</span> <span class="na">default</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="p">}}</span>
+<span class="p">});</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>The first argument is the name of the model (which is also the name of the table).&lt;/li&gt;</li>
+  <li>The second argument is the schema. A schema is just an object where fields map to a type (<code class="highlighter-rouge">String</code>, <code class="highlighter-rouge">Number</code>, <code class="highlighter-rouge">Boolean</code> etc…) or to an object with a <code class="highlighter-rouge">_type</code> field. You can also pass options in the latter case like a default value.&lt;/li&gt;</li>
+</ul>
+
+<p>One really nice thing about RethinkDB is that even if it is a NoSQL database, it lets you do efficient JOINs between table. In our case, we want to create two relations:</p>
+
+<ul>
+  <li>One post has one author. This join is performed on the condition
+<code class="highlighter-rouge">post.authorId == author.id</code>. We would like to store the author in a field named <code class="highlighter-rouge">author</code> so the syntax will be:&lt;/li&gt;</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">Post</span><span class="p">.</span><span class="nx">hasOne</span><span class="p">(</span> <span class="nx">Author</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">,</span> <span class="p">{</span><span class="na">leftKey</span><span class="p">:</span> <span class="s1">'authorId'</span><span class="p">,</span> <span class="na">rightKey</span><span class="p">:</span> <span class="s1">'id'</span><span class="p">})</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>One post can have multiple comments. This join is performed on the condition
+<code class="highlighter-rouge">post.id == comment.postId</code>. We would like to store the joined comments in the field <code class="highlighter-rouge">comments</code> so the syntax will be:</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">Post</span><span class="p">.</span><span class="nx">hasMany</span><span class="p">(</span> <span class="nx">Comment</span><span class="p">,</span> <span class="s1">'comments'</span><span class="p">,</span> <span class="p">{</span><span class="na">leftKey</span><span class="p">:</span> <span class="s1">'id'</span><span class="p">,</span> <span class="na">rightKey</span><span class="p">:</span> <span class="s1">'postId'</span><span class="p">},</span> <span class="p">{</span><span class="na">orderBy</span><span class="p">:</span> <span class="s1">'date'</span><span class="p">})</span>
+</code></pre>
+</div>
+
+<p>The last object with the field <code class="highlighter-rouge">orderBy</code> are options of the JOIN operation. In this case, we want the comments to be ordered by their date.&lt;/li&gt;</p>
+
+<p>Now that we have set all our models, let’s look at how we use our models to make queries:</p>
+
+<p><strong>Basic operations</strong></p>
+
+<ul>
+  <li>To retrieve a single post, the syntax is pretty close to the ReQL one:</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">Post</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error_post</span><span class="p">,</span> <span class="nx">post</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">})</span>
+</code></pre>
+</div>
+
+<p>In ReQL the query would be</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"Post"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error_post</span><span class="p">,</span> <span class="nx">post</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">})</span>
+</code></pre>
+</div>
+
+<p>The main difference here is that you do not need to deal with connection when using Thinky. Thinky will take care of maintaining a pool of connections.&lt;/li&gt;</p>
+
+<ul>
+  <li>Like in ReQL, you can chain commands with Thinky. While chaining is really nice, you may sometimes want to be able to execute a query without using <code class="highlighter-rouge">.run()</code>. In this case you can just pass an extra callback to any function. For example, this query</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">Author</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">author</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">})</span>
+</code></pre>
+</div>
+<p>is the same as</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">Author</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">author</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">})</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>Saving an object in the database is as simple as calling <code class="highlighter-rouge">.save()</code> on an instance of a model.</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">newPost</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
+<span class="nx">newPost</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="p">..</span> <span class="p">})</span>
+</code></pre>
+</div>
+<p>The ReQL query being:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"Post"</span><span class="p">).</span><span class="nx">insert</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="p">...})</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>In a similar way, you can update an object by calling <code class="highlighter-rouge">.update()</code>.</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var newPost = new Post(req.body);
+newPost.update( function(error, post) { ... })
+</code></pre>
+</div>
+
+<p>The equivalent ReQL query would be</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"Post"</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+    <span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="p">...})</span>
+</code></pre>
+</div>
+
+<p>Note: If you call <code class="highlighter-rouge">save()</code> twice on an object created with <code class="highlighter-rouge">new</code>, it will use <code class="highlighter-rouge">insert()</code> the first time, and <code class="highlighter-rouge">update()</code> the second time. The reason why Thinky does not use <code class="highlighter-rouge">upsert</code> by default is because I believe it could lead to undesired deletions/updates.&lt;/li&gt;</p>
+
+<ul>
+  <li>
+    <p>If you want to delete the document with a certain id, you will have to select it with <code class="highlighter-rouge">.get()</code> first then call <code class="highlighter-rouge">.delete()</code> on it.</p>
+
+    <p><code class="highlighter-rouge">javascript
+  Post.get(id).delete( function(error, result) { ... })
+ </code></p>
+
+    <p>Which is in ReQL:</p>
+
+    <p><code class="highlighter-rouge">javascript
+  r.db("blog").table("Post")
+      .get(id)
+      .delete()
+      .run(connection, function(error, result) { ... })
+ </code>
+  Once nice thing with ReQL is that the deletion we did was done in only one query. Another way to do it would be to fetch the document with &lt;codeget()<code class="highlighter-rouge"> then call </code>delete()` on the document, but that would fire two ReQL queries.</p>
+  </li>
+</ul>
+
+<p><strong>Cool things</strong></p>
+
+<ul>
+  <li>
+    <p>Let’s now look at the nice things that Thinky provides. The first query you can read in the api.js file retrieves all the posts, orders them by date in a descending order and retrieves all the joined documents (that is to say the author and the comments).</p>
+
+    <p>This is how you would do it with Thinky:</p>
+
+    <p><code class="highlighter-rouge">javascript
+  Post.orderBy('-date').getJoin().run(function(error, posts) { ... })
+ </code></p>
+
+    <p>The equivalent ReQL query is:</p>
+
+    <p><code class="highlighter-rouge">javascript
+  r.db("blog").table("Post").orderBy(r.desc("date"))
+      .map( function(post) {
+          return doc.merge({
+              author: r.db("blog").table("Author").get(post("authorId"))
+              comments: r.db("blog").table("Comment")
+              .getAll( doc("id"), {index: "postId"})
+              .coerceTo("array")
+          })
+      }).run( connection, function(error, posts) { ... } )
+ </code>
+  Note 1: that everything happens in the database. Thinky <strong>does not</strong> process data.&lt;/li&gt;
+  Note 2: Thinky currently does not use the ReQL <code class="highlighter-rouge">eqJoin</code> command because it behaves like an inner join (see <a href="https://github.com/rethinkdb/rethinkdb/issues/1152">this github issue</a>)</p>
+  </li>
+  <li>
+    <p>You can also retrieve joined documents for only one element. You just have to call <code class="highlighter-rouge">getJoin()</code> like before:</p>
+
+    <p><code class="highlighter-rouge">javascript
+  Post.get(id).getJoin().run(function(error, post) { ... })
+ </code></p>
+  </li>
+</ul>
+
+<p>The other queries in routes/api.js are similar to the previous ones but are done on other tables.</p>
+
+<p>Thinky is a new library. If you have any feedback or suggestions, I would love to read them!</p>
+
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-folder-open"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/categories.html#Geek-ref">
+    		Geek <span>43</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+      
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-tags"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/tags.html#thinky-ref">thinky <span>8</span></a></li>
+     
+    	<li><a href="/tags.html#rethinkdb-ref">rethinkdb <span>21</span></a></li>
+     
+    	<li><a href="/tags.html#orm-ref">orm <span>3</span></a></li>
+     
+    	<li><a href="/tags.html#javascript-ref">javascript <span>2</span></a></li>
+     
+    	<li><a href="/tags.html#express-ref">express <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#blog-ref">blog <span>2</span></a></li>
+    
+  
+
+
+
+    </ul>
+      
+
+    
+    <hr>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog.justonepixel.com -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:468px;height:60px"
+     data-ad-client="ca-pub-5366199723595534"
+     data-ad-slot="2620298801"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <hr>
+    <div class="pagination">
+        <ul>
+            
+            <li class="prev"><a href="/geek/2013/06/17/d3js-and-rethinkdb" title="Playing with D3js and RethinkDB">&larr; Previous</a></li>
+            
+            <li><a href="/archive.html">Archive</a></li>
+            
+            <li class="next"><a href="/geek/2013/08/11/chateau-screenshots" title="Chateau - Few screenshots">Next &rarr;</a></li>
+            
+        </ul>
+    </div>
+    <hr>
+</div>
+
+
+            </div>
+
+            <footer>
+                <p>Michel Tu
+                &mdash;
+                <a href="mailto:michel@justonepixel.com">michel@justonepixel.com</a>
+                &mdash;
+                <a href="http://blog.justonepixel.com">http://blog.justonepixel.com</a></p>
+            </footer>
+
+        </div>
+    </div>
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+		
+    </body>
+</html>
+

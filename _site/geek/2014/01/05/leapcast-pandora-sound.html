@@ -1,0 +1,178 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Justonepixel.com - Quick hack - Sound volume on Leapcast</title>
+        
+        <meta name="author" content="Michel">
+
+        <!-- Enable responsive viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+
+        <!-- atom & rss feed -->
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    </head>
+
+    <body>
+    <div class="wrapper container">
+    <div class="row">
+        <div class="span1 offset1">
+            <div class="navbar">
+                <ul>
+                    <li><a href="/"><img src="/assets/themes/justonepixel/img/home.png" /></a></li>
+                    <li><a href="/about.html"><img src="/assets/themes/justonepixel/img/about.png" /></a></li>
+                    <li><a href="/contact.html"><img src="/assets/themes/justonepixel/img/contact.png" /></a></li>
+                    <li><a href="/archive.html"><img src="/assets/themes/justonepixel/img/archive.png" /></a></li>
+                    <li><a href="/search.html"><img src="/assets/themes/justonepixel/img/search.png" /></a></li>
+                    <li><a href="https://github.com/neumino"><img src="/assets/themes/justonepixel/img/github.png" /></a></li>
+                    <li><a href="http://www.strava.com/athletes/1952902"><img src="/assets/themes/justonepixel/img/strava.png" /></a></li>
+                    <li><a href="https://twitter.com/neumino"><img src="/assets/themes/justonepixel/img/twitter.png" /></a></li>
+                    <li><a href="https://www.facebook.com/michel.tu"><img src="/assets/themes/justonepixel/img/facebook.png" /></a></li>
+                    <li><a href="http://www.linkedin.com/in/tumichel"><img src="/assets/themes/justonepixel/img/linkedin.png" /></a></li>
+                    <li><a href="https://plus.google.com/u/0/111745051853861893359/posts"><img src="/assets/themes/justonepixel/img/googleplus.png" /></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="span9">
+
+            <div class="content">
+                
+
+<div class="post">
+<i class="icon-post"></i>
+
+    <h2>
+        <a href="/geek/2014/01/05/leapcast-pandora-sound" class="title">Quick hack - Sound volume on Leapcast</a>
+        <span class="meta_info">posted on 05 January 2014</span>
+    </h2>
+
+    
+<p>Leapcast currently does let you change the sound volume with Pandora (see the
+<a href="https://github.com/dz0ny/leapcast/blob/master/leapcast/services/websocket.py#L317">source</a>
+for <code class="highlighter-rouge">CastPlatform</code>).</p>
+
+<p>I did a quick/dirty hack to change the sound volume on my computer with the <code class="highlighter-rouge">pactl</code> command.
+That works only if you are running pulseaudio (tested only with Linux for now).</p>
+
+<p>This <a href="https://github.com/neumino/leapcast/commit/6bb7b227ef3b772f997c76bf9d9e50773db5eb43">commit</a>
+let you change the sound volume (if you are running pulseaudio).</p>
+
+<p>You may have to set the <code class="highlighter-rouge">--pulse</code> argument to make it work. Run <code class="highlighter-rouge">pacmd list</code> to find your
+running pulseaudio server.<br />
+You can provide the index (an integer) or the name of the server (like
+<code class="highlighter-rouge">alsa_output.pci-0000_00_1b.0.analog-stereo</code>).</p>
+
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-folder-open"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/categories.html#Geek-ref">
+    		Geek <span>43</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+      
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-tags"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/tags.html#pandora-ref">pandora <span>2</span></a></li>
+     
+    	<li><a href="/tags.html#leapcast-ref">leapcast <span>2</span></a></li>
+     
+    	<li><a href="/tags.html#chromecast-ref">chromecast <span>2</span></a></li>
+     
+    	<li><a href="/tags.html#sound-ref">sound <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#pulseaudio-ref">pulseaudio <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+      
+
+    
+    <hr>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog.justonepixel.com -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:468px;height:60px"
+     data-ad-client="ca-pub-5366199723595534"
+     data-ad-slot="2620298801"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <hr>
+    <div class="pagination">
+        <ul>
+            
+            <li class="prev"><a href="/life/2014/01/01/happy-new-year" title="Happy New Year">&larr; Previous</a></li>
+            
+            <li><a href="/archive.html">Archive</a></li>
+            
+            <li class="next"><a href="/geek/2014/01/27/paving-the-way-for-the-new-nodejs" title="Paving the way for the new Nodejs">Next &rarr;</a></li>
+            
+        </ul>
+    </div>
+    <hr>
+</div>
+
+
+            </div>
+
+            <footer>
+                <p>Michel Tu
+                &mdash;
+                <a href="mailto:michel@justonepixel.com">michel@justonepixel.com</a>
+                &mdash;
+                <a href="http://blog.justonepixel.com">http://blog.justonepixel.com</a></p>
+            </footer>
+
+        </div>
+    </div>
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+		
+    </body>
+</html>
+

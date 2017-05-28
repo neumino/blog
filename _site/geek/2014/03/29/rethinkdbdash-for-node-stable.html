@@ -1,0 +1,209 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Justonepixel.com - Rethinkdbdash for Node.js 0.10.26</title>
+        
+        <meta name="author" content="Michel">
+
+        <!-- Enable responsive viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+
+        <!-- atom & rss feed -->
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    </head>
+
+    <body>
+    <div class="wrapper container">
+    <div class="row">
+        <div class="span1 offset1">
+            <div class="navbar">
+                <ul>
+                    <li><a href="/"><img src="/assets/themes/justonepixel/img/home.png" /></a></li>
+                    <li><a href="/about.html"><img src="/assets/themes/justonepixel/img/about.png" /></a></li>
+                    <li><a href="/contact.html"><img src="/assets/themes/justonepixel/img/contact.png" /></a></li>
+                    <li><a href="/archive.html"><img src="/assets/themes/justonepixel/img/archive.png" /></a></li>
+                    <li><a href="/search.html"><img src="/assets/themes/justonepixel/img/search.png" /></a></li>
+                    <li><a href="https://github.com/neumino"><img src="/assets/themes/justonepixel/img/github.png" /></a></li>
+                    <li><a href="http://www.strava.com/athletes/1952902"><img src="/assets/themes/justonepixel/img/strava.png" /></a></li>
+                    <li><a href="https://twitter.com/neumino"><img src="/assets/themes/justonepixel/img/twitter.png" /></a></li>
+                    <li><a href="https://www.facebook.com/michel.tu"><img src="/assets/themes/justonepixel/img/facebook.png" /></a></li>
+                    <li><a href="http://www.linkedin.com/in/tumichel"><img src="/assets/themes/justonepixel/img/linkedin.png" /></a></li>
+                    <li><a href="https://plus.google.com/u/0/111745051853861893359/posts"><img src="/assets/themes/justonepixel/img/googleplus.png" /></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="span9">
+
+            <div class="content">
+                
+
+<div class="post">
+<i class="icon-post"></i>
+
+    <h2>
+        <a href="/geek/2014/03/29/rethinkdbdash-for-node-stable" class="title">Rethinkdbdash for Node.js 0.10.26</a>
+        <span class="meta_info">posted on 29 March 2014</span>
+    </h2>
+
+    
+<p>I just released two packages of <a href="https://github.com/neumino/rethinkdbdash">rethinkdbdash</a></p>
+
+<ul>
+  <li><code class="highlighter-rouge">rethinkdbdash</code> for Node.js <code class="highlighter-rouge">0.10.26</code></li>
+  <li><code class="highlighter-rouge">rethinkdbdash-unstable</code> for Node.js <code class="highlighter-rouge">0.11.10</code> (and <code class="highlighter-rouge">0.11.9</code>)</li>
+</ul>
+
+<p>I wrote <code class="highlighter-rouge">rethinkdbdash</code> two months ago to improve the syntax of ReQL in the Node.js driver
+by providing</p>
+
+<ul>
+  <li>promises (and testing them
+<a href="http://blog.justonepixel.com/geek/2014/01/27/paving-the-way-for-the-new-nodejs/">with generators</a>)</li>
+  <li>a native/automatic connection pool</li>
+</ul>
+
+<p>While you cannot use generators with the stable version of Node.js, the connection pool is a
+reason good enough to make this driver available for the stable Node.js. You basically
+never have to deal with connections.</p>
+
+<p>For those who want to know what the syntax looks like, here it is:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'rethinkdbdash'</span><span class="p">)();</span>
+
+<span class="nx">r</span><span class="p">.</span><span class="nx">table</span><span class="p">(</span><span class="s2">"comments"</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s2">"eef5fa0c"</span><span class="p">).</span><span class="nx">run</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+<span class="p">}).</span><span class="nx">error</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p>Compared to the one with the official driver:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'rethinkdb'</span><span class="p">);</span>
+
+<span class="nx">r</span><span class="p">.</span><span class="nx">connect</span><span class="p">({},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">connection</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">r</span><span class="p">.</span><span class="nx">table</span><span class="p">(</span><span class="s2">"comments"</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s2">"eef5fa0c"</span><span class="p">).</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">connection</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p><em>Note</em>: If you were using <code class="highlighter-rouge">rethinkdbdash</code> with Node <code class="highlighter-rouge">0.11.10</code>, please switch to <code class="highlighter-rouge">rethinkdbdash-unstable</code>.</p>
+
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-folder-open"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/categories.html#Geek-ref">
+    		Geek <span>43</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+      
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-tags"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/tags.html#rethinkdb-ref">rethinkdb <span>21</span></a></li>
+     
+    	<li><a href="/tags.html#nodejs-ref">nodejs <span>7</span></a></li>
+    
+  
+
+
+
+    </ul>
+      
+
+    
+    <hr>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog.justonepixel.com -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:468px;height:60px"
+     data-ad-client="ca-pub-5366199723595534"
+     data-ad-slot="2620298801"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <hr>
+    <div class="pagination">
+        <ul>
+            
+            <li class="prev"><a href="/geek/2014/03/14/digital-ocean-expectations" title="First experience on Digital Ocean - Updating Archlinux">&larr; Previous</a></li>
+            
+            <li><a href="/archive.html">Archive</a></li>
+            
+            <li class="next"><a href="/geek/2014/07/14/firefox-os-docker" title="Docker container for Firefox OS">Next &rarr;</a></li>
+            
+        </ul>
+    </div>
+    <hr>
+</div>
+
+
+            </div>
+
+            <footer>
+                <p>Michel Tu
+                &mdash;
+                <a href="mailto:michel@justonepixel.com">michel@justonepixel.com</a>
+                &mdash;
+                <a href="http://blog.justonepixel.com">http://blog.justonepixel.com</a></p>
+            </footer>
+
+        </div>
+    </div>
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+		
+    </body>
+</html>
+

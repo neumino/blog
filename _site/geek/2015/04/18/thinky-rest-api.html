@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Justonepixel.com - On building a REST API with thinky</title>
+        
+        <meta name="author" content="Michel">
+
+        <!-- Enable responsive viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+
+        <!-- atom & rss feed -->
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    </head>
+
+    <body>
+    <div class="wrapper container">
+    <div class="row">
+        <div class="span1 offset1">
+            <div class="navbar">
+                <ul>
+                    <li><a href="/"><img src="/assets/themes/justonepixel/img/home.png" /></a></li>
+                    <li><a href="/about.html"><img src="/assets/themes/justonepixel/img/about.png" /></a></li>
+                    <li><a href="/contact.html"><img src="/assets/themes/justonepixel/img/contact.png" /></a></li>
+                    <li><a href="/archive.html"><img src="/assets/themes/justonepixel/img/archive.png" /></a></li>
+                    <li><a href="/search.html"><img src="/assets/themes/justonepixel/img/search.png" /></a></li>
+                    <li><a href="https://github.com/neumino"><img src="/assets/themes/justonepixel/img/github.png" /></a></li>
+                    <li><a href="http://www.strava.com/athletes/1952902"><img src="/assets/themes/justonepixel/img/strava.png" /></a></li>
+                    <li><a href="https://twitter.com/neumino"><img src="/assets/themes/justonepixel/img/twitter.png" /></a></li>
+                    <li><a href="https://www.facebook.com/michel.tu"><img src="/assets/themes/justonepixel/img/facebook.png" /></a></li>
+                    <li><a href="http://www.linkedin.com/in/tumichel"><img src="/assets/themes/justonepixel/img/linkedin.png" /></a></li>
+                    <li><a href="https://plus.google.com/u/0/111745051853861893359/posts"><img src="/assets/themes/justonepixel/img/googleplus.png" /></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="span9">
+
+            <div class="content">
+                
+
+<div class="post">
+<i class="icon-post"></i>
+
+    <h2>
+        <a href="/geek/2015/04/18/thinky-rest-api" class="title">On building a REST API with thinky</a>
+        <span class="meta_info">posted on 18 April 2015</span>
+    </h2>
+
+    
+<p>ReQL is an incredibly powerful beast, and thinky wields most of its power
+by using the exact same API. While thinky can be used like classic ORMs
+like mongoose, it is a shame to miss some of its really nice features.</p>
+
+<p>This article describes how to build the thinky part of a REST API for Express,
+and hopefully is the first of a serie that will showcase what thinky can do. This
+article focuses only on thinky. If you want to learn how Express work, there is a
+plethora of tutorial on the Internet.</p>
+
+<p>I. <em>Create the model</em></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">thinky</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'thinky'</span><span class="p">)();</span>
+<span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">thinky</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">thinky</span><span class="p">.</span><span class="nx">r</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">thinky</span><span class="p">.</span><span class="nx">createModel</span><span class="p">(</span><span class="s1">'User'</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">id</span><span class="p">:</span> <span class="nx">type</span><span class="p">.</span><span class="nx">string</span><span class="p">(),</span>
+  <span class="na">name</span><span class="p">:</span> <span class="nx">type</span><span class="p">.</span><span class="nx">string</span><span class="p">().</span><span class="nx">required</span><span class="p">(),</span>
+  <span class="na">email</span><span class="p">:</span> <span class="nx">type</span><span class="p">.</span><span class="nx">string</span><span class="p">().</span><span class="nx">email</span><span class="p">().</span><span class="nx">required</span><span class="p">(),</span>
+  <span class="na">createdAt</span><span class="p">:</span> <span class="nx">type</span><span class="p">.</span><span class="nx">date</span><span class="p">().</span><span class="k">default</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">now</span><span class="p">())</span>
+<span class="p">});</span>
+</code></pre>
+</div>
+
+<p>The model has 4 fields:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">id</code>: a simple string.</li>
+  <li><code class="highlighter-rouge">name</code>: a required string.</li>
+  <li><code class="highlighter-rouge">email</code>: a required string that should be a valid email.</li>
+  <li><code class="highlighter-rouge">createdAt</code>: the date at which the user was created.</li>
+</ul>
+
+<p>The table will be automatically created under the hood. If you immediately fire
+queries while the table is not ready, the queries will be queued.</p>
+
+<p>II. <em>Insert a new user</em></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">insert</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
+
+  <span class="nx">user</span><span class="p">.</span><span class="nx">save</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// user === result</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">result</span><span class="p">));</span>
+  <span class="p">}).</span><span class="nx">error</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Duplicate primary key, not valid document, network errors etc.</span>
+    <span class="nx">response</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="p">{</span><span class="na">error</span><span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>There are a few things to note here:</p>
+
+<ul>
+  <li>The object <code class="highlighter-rouge">request.body</code> needs to only provide two fields <code class="highlighter-rouge">name</code> and <code class="highlighter-rouge">email</code>.</li>
+  <li>The field <code class="highlighter-rouge">id</code> is the primary key and if <code class="highlighter-rouge">undefined</code>, will be automatically generated
+by RethinkDB when the document is inserted.</li>
+  <li>The field <code class="highlighter-rouge">createdAt</code>, when <code class="highlighter-rouge">undefined</code>, is automatically set to <code class="highlighter-rouge">r.now()</code> by thinky
+and will be replaced in the database by the time at which the query is executed.</li>
+</ul>
+
+<p>III. <em>Get one document by primary key</em></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">get</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">User</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">id</span><span class="p">).</span><span class="nx">run</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">user</span><span class="p">));</span>
+  <span class="p">}).</span><span class="nx">error</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Document not found, network errors etc.</span>
+    <span class="nx">response</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="p">{</span><span class="na">error</span><span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>IV. <em>Update a user given its primary key</em></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">get</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">User</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">id</span><span class="p">).</span><span class="nx">update</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">run</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">user</span><span class="p">));</span>
+  <span class="p">}).</span><span class="nx">error</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Document not found, not valid document, network errors etc.</span>
+    <span class="nx">response</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="p">{</span><span class="na">error</span><span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>If you look at this snippet, a unique query is executed, not two. ORMs usually
+require you to write something like below, which executes two queries.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">// Works with thinky, but you do not have to run two queries.</span>
+<span class="kd">function</span> <span class="nx">get</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">User</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">id</span><span class="p">).</span><span class="nx">run</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">user</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">user</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
+  <span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span>
+  <span class="p">}).</span><span class="nx">error</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">response</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="p">{</span><span class="na">error</span><span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>So what does thinky do in the first snippet?</p>
+
+<ul>
+  <li>It first validate all the fields passed in <code class="highlighter-rouge">update</code>.</li>
+  <li>It run the update query in RethinkDB.</li>
+  <li>It validates the whole new document (returned by the update query).</li>
+</ul>
+
+<p>Thinky validates the whole document again because it can also validation accross multiple fields
+(like check that a user is more than 21 if he lives in the US, else check
+that the user is more than 18).</p>
+
+<p>In the most common case, you just validate the type of each field, so the third step
+will never fails. If it does the document will be reverted (and only in this case
+two queries are executed).</p>
+
+<p><em>Note</em>: The <code class="highlighter-rouge">user</code> may be returned as <code class="highlighter-rouge">undefined</code> if the update is a no-op query. This
+is currently a regression with 2.0 (see <a href="https://github.com/rethinkdb/rethinkdb/issues/4068">rethinkdb/rethinkdb#4068</a>
+to track progress).</p>
+
+<p>V. <em>Delete a user given its primary key</em></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">get</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">User</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">id</span><span class="p">).</span><span class="k">delete</span><span class="p">().</span><span class="nx">execute</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="na">status</span><span class="p">:</span> <span class="s2">"ok"</span><span class="p">}));</span>
+  <span class="p">}).</span><span class="nx">error</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Document not found, network error etc.</span>
+    <span class="nx">response</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="p">{</span><span class="na">error</span><span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>We use <code class="highlighter-rouge">execute</code> here and not <code class="highlighter-rouge">run</code> because no document will be returned.</p>
+
+<p>VI. <em>Return all users</em></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">all</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">User</span><span class="p">.</span><span class="nx">run</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">users</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">users</span><span class="p">));</span>
+  <span class="p">}).</span><span class="nx">error</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Network errors etc.</span>
+    <span class="nx">response</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="p">{</span><span class="na">error</span><span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>VII. <em>Pagination</em></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">perPage</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">range</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">start</span> <span class="o">=</span> <span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">start</span><span class="p">)</span> <span class="p">?</span> <span class="nx">request</span><span class="p">.</span><span class="nx">start</span><span class="p">:</span> <span class="nx">r</span><span class="p">.</span><span class="nx">minval</span><span class="p">;</span>
+  <span class="nx">User</span><span class="p">.</span><span class="nx">between</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">maxcal</span><span class="p">).</span><span class="nx">limit</span><span class="p">(</span><span class="nx">perPage</span><span class="p">).</span><span class="nx">run</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">users</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">users</span><span class="p">));</span>
+  <span class="p">}).</span><span class="nx">error</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">response</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="p">{</span><span class="na">error</span><span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Pagination here is done via primary key with <code class="highlighter-rouge">between</code>/<code class="highlighter-rouge">limit</code>,
+and not with <code class="highlighter-rouge">skip</code>/<code class="highlighter-rouge">limit</code> for performance reasons.</p>
+
+<p>Need the number of users?</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">range</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">User</span><span class="p">.</span><span class="nx">count</span><span class="p">().</span><span class="nx">execute</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">count</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">count</span><span class="p">));</span>
+  <span class="p">}).</span><span class="nx">error</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">response</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="p">{</span><span class="na">error</span><span class="p">:</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>This is it! Stay tuned for the next article!</p>
+
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-folder-open"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/categories.html#Geek-ref">
+    		Geek <span>43</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+      
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-tags"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/tags.html#nodejs-ref">nodejs <span>7</span></a></li>
+     
+    	<li><a href="/tags.html#iojs-ref">iojs <span>3</span></a></li>
+     
+    	<li><a href="/tags.html#thinky-ref">thinky <span>8</span></a></li>
+     
+    	<li><a href="/tags.html#rest-ref">rest <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#api-ref">api <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+      
+
+    
+    <hr>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog.justonepixel.com -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:468px;height:60px"
+     data-ad-client="ca-pub-5366199723595534"
+     data-ad-slot="2620298801"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <hr>
+    <div class="pagination">
+        <ul>
+            
+            <li class="prev"><a href="/geek/2015/02/15/batch-operations-writable-streams" title="Batching operations in Node.js writable streams">&larr; Previous</a></li>
+            
+            <li><a href="/archive.html">Archive</a></li>
+            
+            <li class="next"><a href="/geek/2015/06/29/rethinkdbdash-bug-103" title="Rethinkdbdash bug #103">Next &rarr;</a></li>
+            
+        </ul>
+    </div>
+    <hr>
+</div>
+
+
+            </div>
+
+            <footer>
+                <p>Michel Tu
+                &mdash;
+                <a href="mailto:michel@justonepixel.com">michel@justonepixel.com</a>
+                &mdash;
+                <a href="http://blog.justonepixel.com">http://blog.justonepixel.com</a></p>
+            </footer>
+
+        </div>
+    </div>
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+		
+    </body>
+</html>
+

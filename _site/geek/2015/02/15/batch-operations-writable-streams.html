@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Justonepixel.com - Batching operations in Node.js writable streams</title>
+        
+        <meta name="author" content="Michel">
+
+        <!-- Enable responsive viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+
+        <!-- atom & rss feed -->
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    </head>
+
+    <body>
+    <div class="wrapper container">
+    <div class="row">
+        <div class="span1 offset1">
+            <div class="navbar">
+                <ul>
+                    <li><a href="/"><img src="/assets/themes/justonepixel/img/home.png" /></a></li>
+                    <li><a href="/about.html"><img src="/assets/themes/justonepixel/img/about.png" /></a></li>
+                    <li><a href="/contact.html"><img src="/assets/themes/justonepixel/img/contact.png" /></a></li>
+                    <li><a href="/archive.html"><img src="/assets/themes/justonepixel/img/archive.png" /></a></li>
+                    <li><a href="/search.html"><img src="/assets/themes/justonepixel/img/search.png" /></a></li>
+                    <li><a href="https://github.com/neumino"><img src="/assets/themes/justonepixel/img/github.png" /></a></li>
+                    <li><a href="http://www.strava.com/athletes/1952902"><img src="/assets/themes/justonepixel/img/strava.png" /></a></li>
+                    <li><a href="https://twitter.com/neumino"><img src="/assets/themes/justonepixel/img/twitter.png" /></a></li>
+                    <li><a href="https://www.facebook.com/michel.tu"><img src="/assets/themes/justonepixel/img/facebook.png" /></a></li>
+                    <li><a href="http://www.linkedin.com/in/tumichel"><img src="/assets/themes/justonepixel/img/linkedin.png" /></a></li>
+                    <li><a href="https://plus.google.com/u/0/111745051853861893359/posts"><img src="/assets/themes/justonepixel/img/googleplus.png" /></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="span9">
+
+            <div class="content">
+                
+
+<div class="post">
+<i class="icon-post"></i>
+
+    <h2>
+        <a href="/geek/2015/02/15/batch-operations-writable-streams" class="title">Batching operations in Node.js writable streams</a>
+        <span class="meta_info">posted on 15 February 2015</span>
+    </h2>
+
+    
+<p>I recently implemented writable and transform <a href="nodejs.org/api/stream.html">streams</a> in <a href="https://github.com/neumino/rethinkdbdash">rethinkdbdash</a>.
+Importing a file to a <a href="http://rethinkdb.com">RethinkDB</a> table is now as simple as piping a
+<a href="http://nodejs.org/api/stream.html#stream_class_stream_readable">Readable</a> stream into a
+<a href="http://nodejs.org/api/stream.html#stream_class_stream_writable">Writable</a> one.
+The constraints for the implementation were:</p>
+
+<ul>
+  <li>Insert documents in order (first in, first written).</li>
+  <li>Insert documents in batch of at most <code class="highlighter-rouge">highWaterMark</code> documents.</li>
+</ul>
+
+<p>I somehow couldn’t find anything about this use case, and now that I have
+implemented these streams, I kind of understand why. Basically the current API
+is not designed for batching operations - even <a href="http://nodejs.org/api/stream.html#stream_class_stream_transform">Transform</a>
+streams that support buffering (with <code class="highlighter-rouge">_flush</code>) behave poorly when it comes
+to efficiently batching operations.</p>
+
+<p>Let’s first look at the <a href="http://nodejs.org/api/stream.html#stream_class_stream_writable_1">API</a>
+for Writable streams. We have to implement <code class="highlighter-rouge">writable._write(value, encoding, done)</code>.
+In rethinkdbdash case, we want to insert documents, so the stream are created in <code class="highlighter-rouge">objectMode</code>;
+<code class="highlighter-rouge">value</code> is one document, <code class="highlighter-rouge">encoding</code> is not relevant, and <code class="highlighter-rouge">done</code> is to be called when we are done
+processing the supplied document.</p>
+
+<p>A basic implementation would be:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">Writable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'stream'</span><span class="p">).</span><span class="nx">Writable</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'rethinkdbdash'</span><span class="p">)();</span>
+
+<span class="kd">function</span> <span class="nx">WritableStream</span><span class="p">(</span><span class="nx">table</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_table</span> <span class="o">=</span> <span class="nx">table</span><span class="p">;</span> <span class="c1">// The RethinkDB table to insert in</span>
+
+  <span class="nx">Writable</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">{</span>
+      <span class="na">objectMode</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="na">highWaterMark</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_highWaterMark</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">WritableStream</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_write</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">encoding</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">r</span><span class="p">.</span><span class="nx">table</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_table</span><span class="p">).</span><span class="nx">insert</span><span class="p">(</span><span class="nx">value</span><span class="p">).</span><span class="nx">run</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">done</span><span class="p">();</span>
+  <span class="p">}).</span><span class="nx">error</span><span class="p">(</span><span class="nx">done</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Let’s consider how to batch inserts now.
+Looking at <a href="https://github.com/joyent/node/blob/v0.12.0-release/lib/_stream_writable.js">the implementation</a>
+of <code class="highlighter-rouge">Writable</code> streams in Node.js, a <code class="highlighter-rouge">Writable</code> streams has an internal buffer implemented as a linked list
+(since 0.12 - see the relevant <a href="https://github.com/joyent/node/pull/8826">pull request</a>), and you can access the
+last element of this list via <a href="https://github.com/joyent/node/blob/v0.12.0-release/lib/_stream_writable.js#L115">stream._writableState.lastBufferRequest</a>.</p>
+
+<p>So what we can do is look at the current <code class="highlighter-rouge">value</code> we are processing, check if it is the same as
+the last available value in the internal buffer and from here:</p>
+
+<ul>
+  <li>just call <code class="highlighter-rouge">done</code> to keep buffering if there is more data available</li>
+  <li>flush what we have if there is nothing more in the internal buffer.</li>
+</ul>
+
+<p>So the implementation becomes:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">Writable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'stream'</span><span class="p">).</span><span class="nx">Writable</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'rethinkdbdash'</span><span class="p">)();</span>
+
+<span class="kd">function</span> <span class="nx">WritableStream</span><span class="p">(</span><span class="nx">table</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_table</span> <span class="o">=</span> <span class="nx">table</span><span class="p">;</span> <span class="c1">// The RethinkDB table to insert in</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_cache</span> <span class="o">=</span> <span class="p">[];</span> <span class="c1">// Current cached documents that will be saved at the next insertion</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_highWaterMark</span> <span class="o">=</span> <span class="mi">16</span><span class="p">;</span> <span class="c1">// The size of our cache and or the internal buffer</span>
+
+  <span class="nx">Writable</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">{</span>
+      <span class="na">objectMode</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="na">highWaterMark</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_highWaterMark</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">WritableStream</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_write</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">encoding</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_cache</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">_writableState</span><span class="p">.</span><span class="nx">lastBufferedRequest</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+      <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_writableState</span><span class="p">.</span><span class="nx">lastBufferedRequest</span><span class="p">.</span><span class="nx">chunk</span> <span class="o">!==</span> <span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">// There is more data available</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_cache</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">_highWaterMark</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// Our cache is full, flush documents</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_insert</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+      <span class="c1">// We have more data coming, let's buffer more</span>
+      <span class="nx">done</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// There is NO more data available, flush what we have</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_insert</span><span class="p">(</span><span class="nx">done</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">WritableStream</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_insert</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">values</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_cache</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_cache</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="nx">r</span><span class="p">.</span><span class="nx">table</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">table</span><span class="p">).</span><span class="nx">insert</span><span class="p">(</span><span class="nx">values</span><span class="p">).</span><span class="nx">run</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">done</span><span class="p">();</span>
+  <span class="p">}).</span><span class="nx">error</span><span class="p">(</span><span class="nx">done</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>While this implementation looks fine, it suffers from the fact that when we are inserting, the
+stream is not re-filling its internal buffer. If we inspect the size of <code class="highlighter-rouge">this.cache</code> before each insert,
+when the Writable streams is provided a fast Readable stream, we will see roughly a
+sequence like <code class="highlighter-rouge">1</code>, <code class="highlighter-rouge">highWaterMark-1</code>, <code class="highlighter-rouge">1</code>, <code class="highlighter-rouge">highWaterMark-1</code>, <code class="highlighter-rouge">1</code>, <code class="highlighter-rouge">highWaterMark-1</code> etc.</p>
+
+<p>From here things become tricky. Trying to call <code class="highlighter-rouge">done</code> just after calling <code class="highlighter-rouge">this._insert</code> to
+attempt re-buffering is actually not enough. From an implementation point of view, <code class="highlighter-rouge">done</code> should be
+called immediately after <code class="highlighter-rouge">this._insert</code> as long as there is more data in the cache. If
+there is no more data available and if we are already inserting, we have to keep a reference of <code class="highlighter-rouge">done</code>
+(in <code class="highlighter-rouge">this._pendingCallback</code> in the implementation below) and call it once the current
+insertion is complete.</p>
+
+<p>One problem that surfaces after implementing this solution is that if you have
+a fast stream piping into your writable stream, the internal buffer of the
+writable stream will not buffer fast enough; you still have that sequence of <code class="highlighter-rouge">1</code> and <code class="highlighter-rouge">highWaterMark-1</code>.
+The only way I found to have optimal buffering in case of an efficient input is to move
+the call of <code class="highlighter-rouge">_write</code> in the call stack.</p>
+
+<p>The implementation looks like this one.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">Writable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'stream'</span><span class="p">).</span><span class="nx">Writable</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'rethinkdbdash'</span><span class="p">)();</span>
+
+<span class="kd">function</span> <span class="nx">WritableStream</span><span class="p">(</span><span class="nx">table</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">connection</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_table</span> <span class="o">=</span> <span class="nx">table</span><span class="p">;</span> <span class="c1">// The RethinkDB table to insert in</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_cache</span> <span class="o">=</span> <span class="p">[];</span> <span class="c1">// Current cached documents that will be saved at the next insertion</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_pendingCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span> <span class="c1">// The callback to call when we are done inserting</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_inserting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span> <span class="c1">// Whether an insertion is happening</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_delayed</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span> <span class="c1">// Whether the current call to _next was moved in the call stack or not</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_highWaterMark</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">highWaterMark</span> <span class="o">||</span> <span class="mi">16</span><span class="p">;</span> <span class="c1">// The size of our cache and or the internal buffer</span>
+
+  <span class="nx">Writable</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">objectMode</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="na">highWaterMark</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_highWaterMark</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+<span class="nx">util</span><span class="p">.</span><span class="nx">inherits</span><span class="p">(</span><span class="nx">WritableStream</span><span class="p">,</span> <span class="nx">Writable</span><span class="p">);</span>
+
+<span class="nx">WritableStream</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_write</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">encoding</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_cache</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_next</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">encoding</span><span class="p">,</span> <span class="nx">done</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Everytime we want to insert but do not have a full buffer,</span>
+<span class="c1">// we recurse with setImmediate to give a chance to the input</span>
+<span class="c1">// stream to push a few more elements</span>
+<span class="nx">WritableStream</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_next</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">encoding</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">_writableState</span><span class="p">.</span><span class="nx">lastBufferedRequest</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+      <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_writableState</span><span class="p">.</span><span class="nx">lastBufferedRequest</span><span class="p">.</span><span class="nx">chunk</span> <span class="o">!==</span> <span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">// There's more data to buffer</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_cache</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_highWaterMark</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_delayed</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="c1">// Call done now, and more data will be put in the cache</span>
+      <span class="nx">done</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_inserting</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_delayed</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">_delayed</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+          <span class="c1">// We have to flush</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">_insert</span><span class="p">();</span>
+          <span class="c1">// Fill the buffer while we are inserting data</span>
+          <span class="nx">done</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">_delayed</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+          <span class="nx">setImmediate</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+              <span class="nx">self</span><span class="p">.</span><span class="nx">_next</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">encoding</span><span class="p">,</span> <span class="nx">done</span><span class="p">);</span>
+          <span class="p">})</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+      <span class="k">else</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_delayed</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="c1">// to call when we are dong inserting to keep buffering</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_pendingCallback</span> <span class="o">=</span> <span class="nx">done</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span> <span class="c1">// We just pushed the last element in the internal buffer</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_inserting</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_delayed</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_delayed</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="c1">// to call when we are dong inserting to maybe flag the end</span>
+        <span class="c1">// We cannot call done here as we may be inserting the last batch</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_pendingCallback</span> <span class="o">=</span> <span class="nx">done</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_insert</span><span class="p">();</span>
+      <span class="p">}</span>
+      <span class="k">else</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_delayed</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">setImmediate</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+          <span class="nx">self</span><span class="p">.</span><span class="nx">_next</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">encoding</span><span class="p">,</span> <span class="nx">done</span><span class="p">);</span>
+        <span class="p">})</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_delayed</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="c1">// We cannot call done here as we may be inserting the last batch</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_pendingCallback</span> <span class="o">=</span> <span class="nx">done</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">WritableStream</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_insert</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">_inserting</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">cache</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_cache</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">_cache</span> <span class="o">=</span> <span class="p">[];</span>
+
+  <span class="nx">self</span><span class="p">.</span><span class="nx">_table</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">cache</span><span class="p">).</span><span class="nx">run</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">_inserting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">errors</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">'error'</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">"Failed to insert some documents:"</span><span class="o">+</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="mi">2</span><span class="p">)));</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_pendingCallback</span> <span class="o">===</span> <span class="s1">'function'</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">pendingCallback</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_pendingCallback</span><span class="p">;</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">_pendingCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="nx">pendingCallback</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}).</span><span class="nx">error</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">_inserting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">'error'</span><span class="p">,</span> <span class="nx">error</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>This may be a bit hard to digest, but when we have nothing to add in our cache, we flip <code class="highlighter-rouge">this._delayed</code> to
+<code class="highlighter-rouge">true</code> and call the same function (<code class="highlighter-rouge">_next</code>) with <code class="highlighter-rouge">setImmediate</code>. It is only if we end up in the same situation that we
+will insert an incomplete batch. <a href="https://github.com/neumino/rethinkdbdash/blob/93fba3db1ac54f80a5f9a15cc979506b92081a56/test/writable-stream.js#L47">Tests</a>
+show a better flow of data (a sequence of <code class="highlighter-rouge">highWaterMark</code> values instead of <code class="highlighter-rouge">1</code> and <code class="highlighter-rouge">highWaterMark-1</code>).</p>
+
+<p>Transform streams can be implemented slightly in a more efficient way thanks to the <code class="highlighter-rouge">_flush</code> method; we
+can always call <code class="highlighter-rouge">done</code> after <code class="highlighter-rouge">insert</code> in an attempt to buffer more incoming data,
+but as far as I can tell, moving <code class="highlighter-rouge">_write</code> in the call stack is also required for a better
+flow.</p>
+
+<p>The API for Node.js streams is still tagged as <code class="highlighter-rouge">unstable</code>, so hopefully the API will
+become more friendly for the use cases similar to the one described here.</p>
+
+<p>Questions? Feedback? Shoot me a mail at <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#111;&#114;&#112;&#104;&#101;&#101;&#064;&#103;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;">&#111;&#114;&#112;&#104;&#101;&#101;&#064;&#103;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;</a>
+or ping me on Twitter <a href="https://twitter.com/neumino">@neumino</a></p>
+
+<p><em>Note</em>: Because the internal buffer changed data structure, the implementation showed above
+does not work that well in Node 0.10.</p>
+
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-folder-open"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/categories.html#Geek-ref">
+    		Geek <span>43</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+      
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-tags"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/tags.html#nodejs-ref">nodejs <span>7</span></a></li>
+     
+    	<li><a href="/tags.html#iojs-ref">iojs <span>3</span></a></li>
+     
+    	<li><a href="/tags.html#writable-ref">writable <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#transform-ref">transform <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#streams-ref">streams <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#rethinkdbdash-ref">rethinkdbdash <span>5</span></a></li>
+    
+  
+
+
+
+    </ul>
+      
+
+    
+    <hr>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog.justonepixel.com -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:468px;height:60px"
+     data-ad-client="ca-pub-5366199723595534"
+     data-ad-slot="2620298801"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <hr>
+    <div class="pagination">
+        <ul>
+            
+            <li class="prev"><a href="/geek/2015/02/04/replicate-reql-in-your-classes" title="Replicate ReQL API in your own classes">&larr; Previous</a></li>
+            
+            <li><a href="/archive.html">Archive</a></li>
+            
+            <li class="next"><a href="/geek/2015/04/18/thinky-rest-api" title="On building a REST API with thinky">Next &rarr;</a></li>
+            
+        </ul>
+    </div>
+    <hr>
+</div>
+
+
+            </div>
+
+            <footer>
+                <p>Michel Tu
+                &mdash;
+                <a href="mailto:michel@justonepixel.com">michel@justonepixel.com</a>
+                &mdash;
+                <a href="http://blog.justonepixel.com">http://blog.justonepixel.com</a></p>
+            </footer>
+
+        </div>
+    </div>
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+		
+    </body>
+</html>
+

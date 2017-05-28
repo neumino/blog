@@ -1,0 +1,241 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Justonepixel.com - First experience on Digital Ocean - Updating Archlinux</title>
+        
+        <meta name="author" content="Michel">
+
+        <!-- Enable responsive viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+
+        <!-- atom & rss feed -->
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    </head>
+
+    <body>
+    <div class="wrapper container">
+    <div class="row">
+        <div class="span1 offset1">
+            <div class="navbar">
+                <ul>
+                    <li><a href="/"><img src="/assets/themes/justonepixel/img/home.png" /></a></li>
+                    <li><a href="/about.html"><img src="/assets/themes/justonepixel/img/about.png" /></a></li>
+                    <li><a href="/contact.html"><img src="/assets/themes/justonepixel/img/contact.png" /></a></li>
+                    <li><a href="/archive.html"><img src="/assets/themes/justonepixel/img/archive.png" /></a></li>
+                    <li><a href="/search.html"><img src="/assets/themes/justonepixel/img/search.png" /></a></li>
+                    <li><a href="https://github.com/neumino"><img src="/assets/themes/justonepixel/img/github.png" /></a></li>
+                    <li><a href="http://www.strava.com/athletes/1952902"><img src="/assets/themes/justonepixel/img/strava.png" /></a></li>
+                    <li><a href="https://twitter.com/neumino"><img src="/assets/themes/justonepixel/img/twitter.png" /></a></li>
+                    <li><a href="https://www.facebook.com/michel.tu"><img src="/assets/themes/justonepixel/img/facebook.png" /></a></li>
+                    <li><a href="http://www.linkedin.com/in/tumichel"><img src="/assets/themes/justonepixel/img/linkedin.png" /></a></li>
+                    <li><a href="https://plus.google.com/u/0/111745051853861893359/posts"><img src="/assets/themes/justonepixel/img/googleplus.png" /></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="span9">
+
+            <div class="content">
+                
+
+<div class="post">
+<i class="icon-post"></i>
+
+    <h2>
+        <a href="/geek/2014/03/14/digital-ocean-expectations" class="title">First experience on Digital Ocean - Updating Archlinux</a>
+        <span class="meta_info">posted on 14 March 2014</span>
+    </h2>
+
+    
+<p>I have been using a dedicated server at OVH for a few years now, and the quality of their
+service has become worse and the last incidents prompted me to look for a new server.<br />
+Digital Ocean claims that they are user-friendly and since it is quite cheap, I just
+gave it a try.</p>
+
+<p>Subscribing, setting up 2 factor authentification, starting a droplet was a blast. I
+picked Archlinux, and less than one minute after, my droplet was up and running.</p>
+
+<p>The Arch image is quite old (June 2013) and updating the system is a little more tricky
+than just running <code class="highlighter-rouge">pacman -Syu</code>.<br />
+These instructions were written a few hours after the installation, so they may be
+slightly inaccurate.</p>
+
+<p>First, update the whole system. Because Arch
+<a href="https://www.archlinux.org/news/binaries-move-to-usrbin-requiring-update-intervention/">merged</a>
+<code class="highlighter-rouge">/bin</code>, <code class="highlighter-rouge">/sbin</code> into <code class="highlighter-rouge">/usr/bin</code> and <code class="highlighter-rouge">/lib</code>
+into <code class="highlighter-rouge">/usr/lib</code>, you cannot just run <code class="highlighter-rouge">pacman -Syu</code>. Run instead:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>pacman -Syu --ignore filesystem,bash
+pacman -S bash
+pacman -Su
+</code></pre>
+</div>
+
+<p>Then remove <code class="highlighter-rouge">netcfg</code> and install <code class="highlighter-rouge">netctl</code>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>pacman -R netcfg
+pacman -S netctl
+</code></pre>
+</div>
+
+<p>Run <code class="highlighter-rouge">ip addr</code> to see your interface. In my case it was <code class="highlighter-rouge">enp0s3</code></p>
+
+<p>Create a config file <code class="highlighter-rouge">/etc/netctl/enp0s3</code> with</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Interface=enp0s3
+Connection=ethernet
+IP=static
+Address=('&lt;droplet_ip&gt;/24')
+Gateway='&lt;gateway&gt;'
+DNS=('8.8.4.4', '8.8.8.8')
+</code></pre>
+</div>
+
+<p>Enable the interface</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>netctl enable enp0s3
+</code></pre>
+</div>
+
+<p>Then update the kernel via the web interface.</p>
+
+<p>The network interface is going to change to something like <code class="highlighter-rouge">ens3</code>. Move
+<code class="highlighter-rouge">/etc/netctl/enp0s3</code> to <code class="highlighter-rouge">/etc/netctl/ens3</code> and change the <code class="highlighter-rouge">Interface</code> field.</p>
+
+<p>Update <code class="highlighter-rouge">/lib/systemd/system/sshd.service</code> to be sure that the ssh daemon doesn’t
+<a href="https://wiki.archlinux.org/index.php/Secure_Shell#Managing_the_sshd_daemon">fail on boot</a></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>[Unit]
+Description=OpenSSH Daemon
+Wants=sshdgenkeys.service
+#After=sshdgenkeys.service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/sshd -D
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+</div>
+
+<p>Reboot and your server should be up to date.</p>
+
+<p>And that’s it for updating Arch. It was not the easiest updates, but nothing impossible.
+It would have been nice if Digital Ocean was provided an up to date Arch image though.</p>
+
+<hr />
+<p>Note: You can probably directly set the network interface to <code class="highlighter-rouge">ens3</code>.<br />
+In the worst case you can still access your machine with Digital Ocean’s web shell and fix things there.</p>
+
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-folder-open"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/categories.html#Geek-ref">
+    		Geek <span>43</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+      
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-tags"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/tags.html#archlinux-ref">archlinux <span>8</span></a></li>
+     
+    	<li><a href="/tags.html#digital ocean-ref">digital ocean <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+      
+
+    
+    <hr>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog.justonepixel.com -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:468px;height:60px"
+     data-ad-client="ca-pub-5366199723595534"
+     data-ad-slot="2620298801"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <hr>
+    <div class="pagination">
+        <ul>
+            
+            <li class="prev"><a href="/geek/2014/02/15/archlinux-and-ovh" title="Archlinux on a OVH kimsufi server">&larr; Previous</a></li>
+            
+            <li><a href="/archive.html">Archive</a></li>
+            
+            <li class="next"><a href="/geek/2014/03/29/rethinkdbdash-for-node-stable" title="Rethinkdbdash for Node.js 0.10.26">Next &rarr;</a></li>
+            
+        </ul>
+    </div>
+    <hr>
+</div>
+
+
+            </div>
+
+            <footer>
+                <p>Michel Tu
+                &mdash;
+                <a href="mailto:michel@justonepixel.com">michel@justonepixel.com</a>
+                &mdash;
+                <a href="http://blog.justonepixel.com">http://blog.justonepixel.com</a></p>
+            </footer>
+
+        </div>
+    </div>
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+		
+    </body>
+</html>
+

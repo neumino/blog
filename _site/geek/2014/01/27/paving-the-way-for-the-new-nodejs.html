@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Justonepixel.com - Paving the way for the new Nodejs</title>
+        
+        <meta name="author" content="Michel">
+
+        <!-- Enable responsive viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+
+        <!-- atom & rss feed -->
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    </head>
+
+    <body>
+    <div class="wrapper container">
+    <div class="row">
+        <div class="span1 offset1">
+            <div class="navbar">
+                <ul>
+                    <li><a href="/"><img src="/assets/themes/justonepixel/img/home.png" /></a></li>
+                    <li><a href="/about.html"><img src="/assets/themes/justonepixel/img/about.png" /></a></li>
+                    <li><a href="/contact.html"><img src="/assets/themes/justonepixel/img/contact.png" /></a></li>
+                    <li><a href="/archive.html"><img src="/assets/themes/justonepixel/img/archive.png" /></a></li>
+                    <li><a href="/search.html"><img src="/assets/themes/justonepixel/img/search.png" /></a></li>
+                    <li><a href="https://github.com/neumino"><img src="/assets/themes/justonepixel/img/github.png" /></a></li>
+                    <li><a href="http://www.strava.com/athletes/1952902"><img src="/assets/themes/justonepixel/img/strava.png" /></a></li>
+                    <li><a href="https://twitter.com/neumino"><img src="/assets/themes/justonepixel/img/twitter.png" /></a></li>
+                    <li><a href="https://www.facebook.com/michel.tu"><img src="/assets/themes/justonepixel/img/facebook.png" /></a></li>
+                    <li><a href="http://www.linkedin.com/in/tumichel"><img src="/assets/themes/justonepixel/img/linkedin.png" /></a></li>
+                    <li><a href="https://plus.google.com/u/0/111745051853861893359/posts"><img src="/assets/themes/justonepixel/img/googleplus.png" /></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="span9">
+
+            <div class="content">
+                
+
+<div class="post">
+<i class="icon-post"></i>
+
+    <h2>
+        <a href="/geek/2014/01/27/paving-the-way-for-the-new-nodejs" class="title">Paving the way for the new Nodejs</a>
+        <span class="meta_info">posted on 27 January 2014</span>
+    </h2>
+
+    
+<p><a href="http://rethinkdb.com/docs/introduction-to-reql/">ReQL</a>,
+the RethinkDB Query Language, embeds into your programming
+language, making it pleasant to write queries.<br />
+The JavaScript driver is a great implementation of ReQL, but it forces users to deal
+with callbacks making the code cumbersome.</p>
+
+<p>Recently Nodejs <a href="http://blog.nodejs.org/2014/01/16/nodejs-road-ahead/">announced</a> that
+the next stable release, 0.12.0, is imminent. The biggest feature in Nodejs 0.12.0 most
+developers are looking forward to is generators. Since generators remove the need for
+cumbersome callback code, I decided to take the opportunity to write a new callback-free
+RethinkDB driver from scratch.</p>
+
+<p>I wrote this driver taking into consideration what people were building with the
+current one.</p>
+
+<ul>
+  <li>
+    <p><strong>Promises</strong><br />
+A few projects wrapped the RethinkDB driver with different libraries –
+<a href="https://npmjs.org/package/rql-promise">rql-promise</a>,
+<a href="https://npmjs.org/package/reql-then">reql-then</a><br />
+The new driver works with promises natively.</p>
+  </li>
+  <li>
+    <p><strong>Connection pool</strong><br />
+Many ORMs (<a href="https://npmjs.org/package/reheat">reheat</a>,
+<a href="https://npmjs.org/package/thinky">thinky</a>, etc.) and connectors
+(<a href="https://npmjs.org/package/sweets-nougat">sweets-nougat</a>,
+<a href="https://npmjs.org/package/waterline-rethinkdb">waterline-rethinkdb</a>, etc.)
+are implementing their own connection pools on top of the driver.<br />
+The new driver provides a native connection pool without having to manually acquire and
+release a connection.</p>
+  </li>
+  <li>
+    <p><strong>More accessible</strong><br />
+The current JavaScript driver is buried in RethinkDB main repository, is written in
+CoffeeScript and its tests are designed to run for all official drivers. In the end, it
+is hard to contribute to the driver.<br />
+The new driver has its own repository, is written in full JavaScript, and tests are run
+with <a href="http://visionmedia.github.io/mocha/">mocha</a>
+(and <a href="https://app.wercker.com/#applications/52dffe8ba4acb3ef16010ef8">on wercker</a>).</p>
+  </li>
+</ul>
+
+<p>The result of all these considerations is
+<a href="https://github.com/neumino/rethinkdbdash">rethinkdbdash</a>, which is now, as far as I
+know, feature complete and working.</p>
+
+<p>How is <a href="https://github.com/neumino/rethinkdbdash">rethinkdash</a> better than the official
+JavaScript driver? Let’s look at a concrete example.</p>
+
+<p>Suppose you have two tables with the following schemas:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">// Table posts</span>
+<span class="p">{</span>
+  <span class="nl">id</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+  <span class="nx">title</span><span class="err">:</span> <span class="nb">String</span><span class="p">,</span>
+  <span class="nx">content</span><span class="err">:</span> <span class="nb">String</span>
+<span class="p">}</span>
+
+<span class="c1">// Table comments</span>
+<span class="p">{</span>
+  <span class="nl">id</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+  <span class="nx">idPost</span><span class="err">:</span> <span class="nb">String</span><span class="p">,</span> <span class="c1">// id of the post</span>
+  <span class="nx">comment</span><span class="err">:</span> <span class="nb">String</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>And suppose you want to fetch all the posts of your blog with their comments and retrieve
+them with the following format:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">// Results</span>
+<span class="p">{</span>
+  <span class="nl">id</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+  <span class="nx">title</span><span class="err">:</span> <span class="nb">String</span><span class="p">,</span>
+  <span class="nx">content</span><span class="err">:</span> <span class="nb">String</span><span class="p">,</span>
+  <span class="nx">comments</span><span class="err">:</span> <span class="p">[</span> <span class="p">{</span><span class="na">id</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span> <span class="na">idPost</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span> <span class="na">comment</span><span class="p">:</span> <span class="nb">String</span><span class="p">},</span> <span class="p">...</span> <span class="p">]</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>With ReQL you can retrieve everything in one query using a subquery[1].</p>
+
+<p>This is how you currently do it with the old driver.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"rethinkdb"</span><span class="p">);</span>
+<span class="c1">// Code for Express goes here...</span>
+
+<span class="kd">function</span> <span class="nx">getPosts</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">r</span><span class="p">.</span><span class="nx">connect</span><span class="p">({},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">connection</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="k">return</span> <span class="nx">handleError</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+
+    <span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"posts"</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">post</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">post</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span>
+        <span class="na">comments</span><span class="p">:</span> <span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"comments"</span><span class="p">).</span><span class="nx">filter</span><span class="p">({</span><span class="na">idPost</span><span class="p">:</span> <span class="nx">post</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)}).</span><span class="nx">coerceTo</span><span class="p">(</span><span class="s2">"array"</span><span class="p">)</span>
+      <span class="p">})</span>
+    <span class="p">}).</span><span class="nx">run</span><span class="p">(</span><span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">cursor</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="k">return</span> <span class="nx">handleError</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+
+      <span class="nx">cursor</span><span class="p">.</span><span class="nx">toArray</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="k">return</span> <span class="nx">handleError</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+
+        <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">results</span><span class="p">));</span>
+      <span class="p">})</span>
+    <span class="p">})</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Now look how wonderful the code looks with new driver.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"rethinkdbdash"</span><span class="p">)();</span>
+<span class="c1">// Code for Koa goes here...</span>
+
+<span class="kd">function</span><span class="o">*</span> <span class="nx">getPosts</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">try</span><span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">cursor</span> <span class="o">=</span> <span class="k">yield</span> <span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"posts"</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">post</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">post</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span>
+        <span class="na">comments</span><span class="p">:</span> <span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"comments"</span><span class="p">).</span><span class="nx">filter</span><span class="p">({</span><span class="na">idPost</span><span class="p">:</span> <span class="nx">post</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)}).</span><span class="nx">coerceTo</span><span class="p">(</span><span class="s2">"array"</span><span class="p">)</span>
+      <span class="p">})</span>
+    <span class="p">}).</span><span class="nx">run</span><span class="p">()</span>
+    <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="k">yield</span> <span class="nx">cursor</span><span class="p">.</span><span class="nx">toArray</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">body</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">catch</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">handleError</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+<p>What is awesome here, is:</p>
+
+<ul>
+  <li>There are no callbacks.</li>
+  <li>You do not need to open/provide/close a connection.</li>
+</ul>
+
+<p>Take a look at the usual
+<a href="https://github.com/neumino/rethinkdbdash-examples/tree/master/todo">Todo example</a>
+built with <a href="http://angularjs.org/">AngularJS</a>, <a href="https://github.com/koajs/koa">Koa</a>
+end <a href="https://github.com/neumino/rethinkdbdash">Rethinkdbdash</a>.</p>
+
+<p>We have to wait for the stable release of Node before the new driver can become
+mainstream. In the meantime, you can build Nodejs 0.11.10 from source to play with
+rethinkdbdash[2].<br />
+Once people use it for a bit and it is better tested, it should become the official driver.</p>
+
+<p><a href="https://twitter.com/neumino">Feedback</a>,
+<a href="https://github.com/neumino/rethinkdbdash/pulls">pull requests</a>
+and <a href="https://news.ycombinator.com/item?id=7146502">comments</a> are welcome!</p>
+
+<hr />
+
+<p>[1] The anonymous function in <code class="highlighter-rouge">map</code> is parsed and send to the server.<br />
+Read <a href="http://www.rethinkdb.com/blog/lambda-functions/">all about lambda functions in RethinkDB queries</a>
+if that piques your interest.</p>
+
+<p>[2] You need to build from source or you may get errors like</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>node: symbol lookup error: /some/path/protobuf.node: undefined symbol: _ZN4node6Buffer3NewEm
+</code></pre>
+</div>
+
+
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-folder-open"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/categories.html#Geek-ref">
+    		Geek <span>43</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+      
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-tags"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/tags.html#rethinkdbdash-ref">rethinkdbdash <span>5</span></a></li>
+     
+    	<li><a href="/tags.html#rethinkdb-ref">rethinkdb <span>21</span></a></li>
+     
+    	<li><a href="/tags.html#node-ref">node <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+      
+
+    
+    <hr>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog.justonepixel.com -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:468px;height:60px"
+     data-ad-client="ca-pub-5366199723595534"
+     data-ad-slot="2620298801"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <hr>
+    <div class="pagination">
+        <ul>
+            
+            <li class="prev"><a href="/geek/2014/01/05/leapcast-pandora-sound" title="Quick hack - Sound volume on Leapcast">&larr; Previous</a></li>
+            
+            <li><a href="/archive.html">Archive</a></li>
+            
+            <li class="next"><a href="/geek/2014/02/15/archlinux-and-ovh" title="Archlinux on a OVH kimsufi server">Next &rarr;</a></li>
+            
+        </ul>
+    </div>
+    <hr>
+</div>
+
+
+            </div>
+
+            <footer>
+                <p>Michel Tu
+                &mdash;
+                <a href="mailto:michel@justonepixel.com">michel@justonepixel.com</a>
+                &mdash;
+                <a href="http://blog.justonepixel.com">http://blog.justonepixel.com</a></p>
+            </footer>
+
+        </div>
+    </div>
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+		
+    </body>
+</html>
+

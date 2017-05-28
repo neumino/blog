@@ -1,0 +1,249 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Justonepixel.com - Building RethinkDB on a Raspberry Pi</title>
+        
+        <meta name="author" content="Michel">
+
+        <!-- Enable responsive viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+
+        <!-- atom & rss feed -->
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    </head>
+
+    <body>
+    <div class="wrapper container">
+    <div class="row">
+        <div class="span1 offset1">
+            <div class="navbar">
+                <ul>
+                    <li><a href="/"><img src="/assets/themes/justonepixel/img/home.png" /></a></li>
+                    <li><a href="/about.html"><img src="/assets/themes/justonepixel/img/about.png" /></a></li>
+                    <li><a href="/contact.html"><img src="/assets/themes/justonepixel/img/contact.png" /></a></li>
+                    <li><a href="/archive.html"><img src="/assets/themes/justonepixel/img/archive.png" /></a></li>
+                    <li><a href="/search.html"><img src="/assets/themes/justonepixel/img/search.png" /></a></li>
+                    <li><a href="https://github.com/neumino"><img src="/assets/themes/justonepixel/img/github.png" /></a></li>
+                    <li><a href="http://www.strava.com/athletes/1952902"><img src="/assets/themes/justonepixel/img/strava.png" /></a></li>
+                    <li><a href="https://twitter.com/neumino"><img src="/assets/themes/justonepixel/img/twitter.png" /></a></li>
+                    <li><a href="https://www.facebook.com/michel.tu"><img src="/assets/themes/justonepixel/img/facebook.png" /></a></li>
+                    <li><a href="http://www.linkedin.com/in/tumichel"><img src="/assets/themes/justonepixel/img/linkedin.png" /></a></li>
+                    <li><a href="https://plus.google.com/u/0/111745051853861893359/posts"><img src="/assets/themes/justonepixel/img/googleplus.png" /></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="span9">
+
+            <div class="content">
+                
+
+<div class="post">
+<i class="icon-post"></i>
+
+    <h2>
+        <a href="/geek/2013/12/06/rethinkdb-raspberry-pi" class="title">Building RethinkDB on a Raspberry Pi</a>
+        <span class="meta_info">posted on 06 December 2013</span>
+    </h2>
+
+    
+<p>It took 3 whole days, but I did build <a href="http://rethinkdb.com">RethinkDB</a> on my <a href="http://www.raspberrypi.org/">
+Raspberry Pi</a>, and it’s working!</p>
+
+<p>All the praise should go to <a href="https://github.com/davidthomas426">@davidthomas426</a> who
+submitted a <a href="https://github.com/rethinkdb/rethinkdb/pull/1625">pull request</a> for
+RethinkDB to support ARM.</p>
+
+<p>Here is what I have done to build RethinkDB on a Raspberry Pi.<br />
+A few things about these instructions:</p>
+
+<ul>
+  <li>There may be a few quirks as I wrote them after building RethinkDB.</li>
+  <li>They are slightly different than what you can find on
+<a href="http://www.rethinkdb.com/docs/install/arch/">RethinkDB’s website</a> since the branch I
+used was based on 1.10.</li>
+</ul>
+
+<p>I built RethinkDB on <a href="http://archlinuxarm.org/platforms/armv6/raspberry-pi">Archlinux Arm</a>.<br />
+Building RethinkDB requires more than 500MB of RAM, so you have to create a swap
+partition. I used a 2GB swap, a smaller swap may work (I would say 1GB is enough), but 
+I haven’t tried it.</p>
+
+<p>Install some dependencies.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo pacman -S make gcc protobuf boost python2 gperftools nodejs base-devel python2-pip
+</code></pre>
+</div>
+
+<p>Make <code class="highlighter-rouge">python2</code> the default <code class="highlighter-rouge">python</code>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo rm /bin/python
+sudo ln -s /bin/python2 /usr/python
+</code></pre>
+</div>
+
+<p>Install <code class="highlighter-rouge">pyyaml</code>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo pip2 install pyyaml
+</code></pre>
+</div>
+
+<p>Install <code class="highlighter-rouge">v8</code> from AUR.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>yaourt -S v8
+</code></pre>
+</div>
+
+<p>Clone the source</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>git clone https://github.com/davidthomas426/rethinkdb
+cd rethinkdb
+git checkout davidthomas426_277_arm_support
+</code></pre>
+</div>
+
+<p>Run <code class="highlighter-rouge">configure</code></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>./configure --dynamic tcmalloc_minimal
+</code></pre>
+</div>
+
+<p>I also changed the swappiness to <code class="highlighter-rouge">10</code> - I’m not sure how useful it is though.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo sysctl vm.swappiness=10
+</code></pre>
+</div>
+
+<p>You have to build with <code class="highlighter-rouge">DEBUG=1</code> to avoid
+<a href="https://github.com/rethinkdb/rethinkdb/issues/1731">this bug</a> (it will be fixed in
+1.12)</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>make DEBUG=1
+</code></pre>
+</div>
+<p>You may see warnings like <code class="highlighter-rouge">note: the mangling of 'va_list' has changed in GCC 4.4</code>. You
+can just ignore those.</p>
+
+<p>After about 3 days, you can start RethinkDB with</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>./rethinkdb -c 1 -no-direct-io
+</code></pre>
+</div>
+
+<p>If you are looking for the binary, it’s available <a href="http://justonepixel.com/retihnkdb/pi/20131206rethinkdb">here</a></p>
+
+<p>I will try to spend some time creating a branch based on <code class="highlighter-rouge">next</code> that supports ARM and
+build again.</p>
+
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-folder-open"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/categories.html#Geek-ref">
+    		Geek <span>43</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+      
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-tags"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/tags.html#rethinkdb-ref">rethinkdb <span>21</span></a></li>
+     
+    	<li><a href="/tags.html#raspberry-ref">raspberry <span>2</span></a></li>
+     
+    	<li><a href="/tags.html#pi-ref">pi <span>2</span></a></li>
+     
+    	<li><a href="/tags.html#arm-ref">arm <span>2</span></a></li>
+    
+  
+
+
+
+    </ul>
+      
+
+    
+    <hr>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog.justonepixel.com -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:468px;height:60px"
+     data-ad-client="ca-pub-5366199723595534"
+     data-ad-slot="2620298801"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <hr>
+    <div class="pagination">
+        <ul>
+            
+            <li class="prev"><a href="/geek/2013/11/30/microsoft-sculpt" title="Microsoft sculpt, first impressions">&larr; Previous</a></li>
+            
+            <li><a href="/archive.html">Archive</a></li>
+            
+            <li class="next"><a href="/geek/2013/12/13/rethinkdb-raspberry-pi-2" title="Building RethinkDB on a Raspberry Pi - Part 2">Next &rarr;</a></li>
+            
+        </ul>
+    </div>
+    <hr>
+</div>
+
+
+            </div>
+
+            <footer>
+                <p>Michel Tu
+                &mdash;
+                <a href="mailto:michel@justonepixel.com">michel@justonepixel.com</a>
+                &mdash;
+                <a href="http://blog.justonepixel.com">http://blog.justonepixel.com</a></p>
+            </footer>
+
+        </div>
+    </div>
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+		
+    </body>
+</html>
+

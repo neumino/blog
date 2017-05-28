@@ -1,0 +1,468 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Justonepixel.com - Quickstart with ReQL</title>
+        
+        <meta name="author" content="Michel">
+
+        <!-- Enable responsive viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+
+        <!-- atom & rss feed -->
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    </head>
+
+    <body>
+    <div class="wrapper container">
+    <div class="row">
+        <div class="span1 offset1">
+            <div class="navbar">
+                <ul>
+                    <li><a href="/"><img src="/assets/themes/justonepixel/img/home.png" /></a></li>
+                    <li><a href="/about.html"><img src="/assets/themes/justonepixel/img/about.png" /></a></li>
+                    <li><a href="/contact.html"><img src="/assets/themes/justonepixel/img/contact.png" /></a></li>
+                    <li><a href="/archive.html"><img src="/assets/themes/justonepixel/img/archive.png" /></a></li>
+                    <li><a href="/search.html"><img src="/assets/themes/justonepixel/img/search.png" /></a></li>
+                    <li><a href="https://github.com/neumino"><img src="/assets/themes/justonepixel/img/github.png" /></a></li>
+                    <li><a href="http://www.strava.com/athletes/1952902"><img src="/assets/themes/justonepixel/img/strava.png" /></a></li>
+                    <li><a href="https://twitter.com/neumino"><img src="/assets/themes/justonepixel/img/twitter.png" /></a></li>
+                    <li><a href="https://www.facebook.com/michel.tu"><img src="/assets/themes/justonepixel/img/facebook.png" /></a></li>
+                    <li><a href="http://www.linkedin.com/in/tumichel"><img src="/assets/themes/justonepixel/img/linkedin.png" /></a></li>
+                    <li><a href="https://plus.google.com/u/0/111745051853861893359/posts"><img src="/assets/themes/justonepixel/img/googleplus.png" /></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="span9">
+
+            <div class="content">
+                
+
+<div class="post">
+<i class="icon-post"></i>
+
+    <h2>
+        <a href="/geek/2013/04/05/quickstart-reql" class="title">Quickstart with ReQL</a>
+        <span class="meta_info">posted on 05 April 2013</span>
+    </h2>
+
+    
+<p>This (not so quick) start will rely on JavaScript. If you want to use Python or
+Ruby, don’t look at the parts that deal with a callback.</p>
+
+<p>This article can be splitted in 4 parts</p>
+
+<ol>
+  <li>Connection and meta queries</li>
+  <li>Usual operations</li>
+  <li>Joins</li>
+  <li>Map-reduce</li>
+</ol>
+
+<h3 id="connection-and-meta-queries">Connection and meta queries</h3>
+
+<p>Start your server with</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>rethinkdb
+</code></pre>
+</div>
+
+<p>Start node.js. The code starts with a require</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'rethinkdb'</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p>All the functions we are going to use, are methods of the variable r.</p>
+
+<p>Then connect to the server. if you haven’t started the server on your local
+machine or have defined used the flag –port-driver or –port-offset, update the
+port value (Look for the line info: Listening for client driver connections on port)</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">connection</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<span class="nx">r</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span> <span class="p">{</span><span class="na">host</span><span class="p">:</span> <span class="s1">'localhost'</span><span class="p">,</span> <span class="na">port</span><span class="p">:</span> <span class="mi">28015</span><span class="p">}</span> <span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">conn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+    <span class="nx">connection</span> <span class="o">=</span> <span class="nx">conn</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The callback defined in the JavaScript driver use the node convention <code class="highlighter-rouge">function(err, result) {}</code></p>
+
+<p>This is how you list the databases you have</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">dbList</span><span class="p">().</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+    <span class="nx">util</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">r.dbList()</code> is the query that is going to be built by the JavaScript driver.
+When you are going to call .run() on it, the query is going to be compiled in
+a binary array (using google protobuf library) then send to the server. When the
+driver get the response back, it executes the callback.</p>
+
+<p>If you just started RethinkDB, you should see a database test.</p>
+
+<p>Now let’s create a database blog.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">dbCreate</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">})</span>
+</code></pre>
+</div>
+
+<p>You can check that it was created with .dbList()
+Now create a table users.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">tableCreate</span><span class="p">(</span><span class="s2">"users"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>The query starts with r, then we “select” the database blog and then we create a
+table users. If you log the results, you should see { created: 1}</p>
+
+<p>You can verify again that the table was created with .tableList()</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">tableList</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Again, we select the database blog first and only then list the tables.</p>
+
+<h3 id="usual-operations">Usual operations</h3>
+
+<p>Let’s insert some data now in the database users</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"users"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">insert</span><span class="p">(</span> <span class="p">{</span>
+        <span class="na">name</span><span class="p">:</span> <span class="s2">"Michel"</span><span class="p">,</span>
+        <span class="na">age</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span>
+        <span class="na">karma</span><span class="p">:</span> <span class="mi">108</span><span class="p">,</span>
+        <span class="na">gender</span><span class="p">:</span> <span class="s2">"male"</span>
+    <span class="p">}).</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>The callback should log an object like this</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">{</span>
+    <span class="s2">"inserted"</span><span class="err">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"generated_keys"</span><span class="err">:</span><span class="p">[</span>
+        <span class="s2">"3c05a2cc-de49-463c-9a7e-abeeef7f9568"</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>When we created a table with .tableCreate(), we just passed the name of the table,
+so RethinkDB pick the default name for the primary key which is id.</p>
+
+<p>The object we inserted didn’t have a value for id, so RethinkDB just generated
+a random value for us <code class="highlighter-rouge">3c05a2cc-de49-463c-9a7e-abeeef7f9568</code>.</p>
+
+<p>Let’s retrieve our data.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"users"</span><span class="p">).</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">cursor</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">cursor</span><span class="p">.</span><span class="nx">toArray</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">util</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p>Wait, what is this double nested callbacks?</p>
+
+<p><code class="highlighter-rouge">r.db("blog").table("users")</code> is going to return all the documents in the table
+users with a stream (that can be huge). That’s why the callback in run() will
+provide a cursor.</p>
+
+<p>Here we call <code class="highlighter-rouge">toArray( callback )</code> that is going to convert the cursor to an array
+and call our callback with it. A RethinkDB cursor comes with other useful methods
+like .each(), hasNext() and next(). There is an <a href="https://github.com/rethinkdb/rethinkdb/issues/604">issue on github</a> to make the API
+more consistent.</p>
+
+<p>Let’s insert a little more data before going further.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"users"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">insert</span><span class="p">([</span>
+        <span class="p">{</span><span class="na">name</span><span class="p">:</span> <span class="s2">"Laurent"</span><span class="p">,</span> <span class="na">age</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="na">karma</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="na">gender</span><span class="p">:</span> <span class="s2">"male"</span> <span class="p">},</span>
+        <span class="p">{</span><span class="na">name</span><span class="p">:</span> <span class="s2">"Sophie"</span><span class="p">,</span> <span class="na">age</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span> <span class="na">karma</span><span class="p">:</span> <span class="mi">57</span><span class="p">,</span> <span class="nx">gender</span><span class="p">;</span> <span class="s2">"female"</span> <span class="p">},</span>
+        <span class="p">{</span><span class="na">name</span><span class="p">:</span> <span class="s2">"Aurelie"</span><span class="p">,</span> <span class="na">age</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="na">karma</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="na">gender</span><span class="p">:</span> <span class="s2">"female"</span> <span class="p">},</span>
+        <span class="p">{</span><span class="na">name</span><span class="p">:</span> <span class="s2">"Dan"</span><span class="p">,</span> <span class="na">age</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="na">karma</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span> <span class="na">gender</span><span class="p">:</span> <span class="s2">"mal"</span> <span class="p">},</span>
+    <span class="p">]).</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>To extract all users that are more than 21, we can use a filter that way:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"users"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">row</span><span class="p">(</span><span class="s2">"age"</span><span class="p">).</span><span class="nx">ge</span><span class="p">(</span><span class="mi">21</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">cursor</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>The method filter() take a predicate as argument. Here, <code class="highlighter-rouge">r.row</code> select the current
+row being accessed while <code class="highlighter-rouge">("age")</code> will select the attribute age. In Python or Ruby,
+the equivalent syntax is r.row[“age”]. JavaScript doesn’t allow to overwrite the
+square brackets operator, so it has been replaced with parentheses. Once we have
+the age of the user, we compare it with ge() which stands for greater or equal.</p>
+
+<p>That is one way to do thing. A real cool thing about RethinkDB is that you can pass
+anonymous functions (also known as lambda functions). Here is the same query with
+an anonymous function.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"users"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">filter</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">user</span><span class="p">(</span><span class="s2">"age"</span><span class="p">).</span><span class="nx">ge</span><span class="p">(</span><span class="mi">21</span><span class="p">)</span>
+    <span class="p">}).</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">cursor</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>If you want to update all the users that are less than 21 with a boolean value 
+<code class="highlighter-rouge"><span class="p">{</span><span class="w"> </span><span class="err">can_drink:</span><span class="w"> </span><span class="err">false</span><span class="p">}</span></code>, you have first to select your data with a filter() and
+then to update your data with update(). Here is how it is done</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"users"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">row</span><span class="p">(</span><span class="s2">"age"</span><span class="p">).</span><span class="nx">lt</span><span class="p">(</span><span class="mi">21</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">update</span><span class="p">(</span> <span class="p">{</span> <span class="na">can_drink</span><span class="p">:</span> <span class="kc">false</span> <span class="p">}</span> <span class="p">)</span>
+    <span class="p">.</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>RethinkDB provides a way to completely replace a document with the method replace. That’s also how you remove an attribute. Let’s remove the attribute can_drink from our users who are more than 18. The philosophy stay the same. We first select our users, then replace them.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>r.db("blog").table("users")
+    .filter(r.row("age").ge(18))
+    .replace(r.row.without("can_drink"))
+    .run( connection, function(err, result) { ... } )
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">r.row.without("can_drink")</code> returns the current element without the field can_drink.</p>
+
+<p>If you want to delete all users less than 18, you have to go with the command delete().</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>r.db("blog").table("users")
+    .filter(r.row("age").lt(18))
+    .delete()
+    .run( connection, function(err, result) { ... } )
+</code></pre>
+</div>
+
+<p>One other way to select a result is using get(). The example below is going to return one document whose primary key is “3c05a2cc-de49-463c-9a7e-abeeef7f9568”. This query is more efficient than a simple filter because it will do the search with a B-tree. Right now, get() only supports primary key. It will soon be able to do the same with a secondary index (See <a href="https://github.com/rethinkdb/rethinkdb/issues/602">#602</a> for progress).</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>r.db("blog").table("users")
+    .get("3c05a2cc-de49-463c-9a7e-abeeef7f9568")
+    .run( connection, function(err, result) { ... } )
+</code></pre>
+</div>
+
+<p>That’s all for the common operations.</p>
+
+<h3 id="joins">Joins</h3>
+
+<p>Let’s take a look at how to do joins. Even if RethinkDB is a NoSQL database, it
+provides efficient joins with the .eqJoin() method.</p>
+
+<p>Let’s suppose that we have a table comments with the following schema</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">{</span>
+    <span class="nl">id</span><span class="p">:</span> <span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span>
+    <span class="nx">id_author</span><span class="err">:</span> <span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span>
+    <span class="nx">comment</span><span class="err">:</span> <span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>To retrieve all the comments with the name of the user, we can do a join this way:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s1">'comments'</span><span class="p">).</span><span class="nx">eqJoin</span><span class="p">(</span>
+    <span class="s2">"id_author"</span><span class="p">,</span>
+    <span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s1">'users'</span><span class="p">)</span>
+    <span class="p">).</span><span class="nx">zip</span><span class="p">()</span>
+<span class="p">.</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>We are going to take a stream of comments, and for each comment, we are going to
+look for users whose id match id_author of the current comment.</p>
+
+<p><code class="highlighter-rouge">zip()</code> is a going to merge the comment and the author in the same document.
+If you want to do a join on non-primary keys, you can use <code class="highlighter-rouge">innerJoin()</code> or <code class="highlighter-rouge">outerJoin()</code></p>
+
+<h3 id="map-reduce">Map reduce</h3>
+
+<p>Let’s now look at the cool things. RethinkDB provides an efficient way to do map/reduce.
+Suppose you want to know what is the sum of karma</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"users"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">row</span><span class="p">(</span><span class="s2">"karma"</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+    <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>The method map is going to map the value of the field karma, then reduce is going to make the sum of all the value of karma.</p>
+
+<p>The second parameter of reduce() is the base. A naive implementation would look like that</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">map</span>    <span class="o">-&gt;</span> <span class="p">[</span><span class="mi">108</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">57</span><span class="p">,</span> <span class="mi">90</span> <span class="p">]</span>
+<span class="nx">reduce</span> <span class="o">-&gt;</span> <span class="mi">0</span> <span class="o">+</span> <span class="mi">108</span> <span class="o">+</span> <span class="mi">42</span> <span class="o">+</span> <span class="mi">57</span> <span class="o">+</span> <span class="mi">90</span> <span class="o">-&gt;</span> <span class="mi">297</span>
+</code></pre>
+</div>
+
+<p>The method reduce() is implemented in parallel, so you are not free to specify whatever you want as a base. Suppose that the first two documents are on a server and the last two are on a second server.</p>
+
+<p>What happens is going to be something like that</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>map    -&gt; [    108, 42,           57, 90      ]
+           data on server 1 - data on server 2
+
+reduce -&gt;  Server 1 
+           0+108 -&gt;1108
+           108+42 -&gt; 150
+           -------------
+           Server 2
+           0+57 -&gt; 57
+           57+90  -&gt; 147
+           -------------
+           150+147 -&gt; 297
+</code></pre>
+</div>
+
+<p>So if you want to retrieve the sum of the karma plus 10, you can not pass 10 as
+a base. You have to add 10 after the reduce. The base has to be neutral.</p>
+
+<p>RethinkDB also provide a groupedMapReduce method that is going to group rows,
+do a map, and eventually reduce the results.</p>
+
+<p>Here is how to compute the sum of the karma of the two genders.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">r</span><span class="p">.</span><span class="nx">db</span><span class="p">(</span><span class="s2">"blog"</span><span class="p">).</span><span class="nx">table</span><span class="p">(</span><span class="s2">"users"</span><span class="p">).</span><span class="nx">groupedMapReduce</span><span class="p">(</span>
+    <span class="nx">r</span><span class="p">.</span><span class="nx">row</span><span class="p">(</span><span class="s2">"gender"</span><span class="p">),</span> <span class="c1">// group by gender</span>
+    <span class="nx">r</span><span class="p">.</span><span class="nx">row</span><span class="p">(</span><span class="s2">"karma"</span><span class="p">),</span> <span class="c1">// map the value of karma</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">},</span> <span class="c1">// sum the karma</span>
+    <span class="mi">0</span>
+<span class="p">).</span><span class="nx">run</span><span class="p">(</span> <span class="nx">connection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>And that’s all for the quick start. This was a quick glance at how to do common operations and some little fancy (yet useful) things like join and map-reduce. I didn’t talk about everything, like how to use a default database etc. If you want to know more about Rql, take a look at the <a href="http://rethinkdb.com/api">API docs</a>.</p>
+
+
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-folder-open"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/categories.html#Geek-ref">
+    		Geek <span>43</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+      
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-tags"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/tags.html#quickstart-ref">quickstart <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#reql-ref">reql <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#rethinkdb-ref">rethinkdb <span>21</span></a></li>
+     
+    	<li><a href="/tags.html#javascript-ref">javascript <span>2</span></a></li>
+    
+  
+
+
+
+    </ul>
+      
+
+    
+    <hr>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog.justonepixel.com -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:468px;height:60px"
+     data-ad-client="ca-pub-5366199723595534"
+     data-ad-slot="2620298801"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <hr>
+    <div class="pagination">
+        <ul>
+            
+            <li class="prev"><a href="/geek/2013/03/04/chateau-dataexplorer" title="Chateau - A data explorer for RethinkDB">&larr; Previous</a></li>
+            
+            <li><a href="/archive.html">Archive</a></li>
+            
+            <li class="next"><a href="/life/2013/04/09/i-biked-to-work" title="Today I biked to work">Next &rarr;</a></li>
+            
+        </ul>
+    </div>
+    <hr>
+</div>
+
+
+            </div>
+
+            <footer>
+                <p>Michel Tu
+                &mdash;
+                <a href="mailto:michel@justonepixel.com">michel@justonepixel.com</a>
+                &mdash;
+                <a href="http://blog.justonepixel.com">http://blog.justonepixel.com</a></p>
+            </footer>
+
+        </div>
+    </div>
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+		
+    </body>
+</html>
+

@@ -1,0 +1,215 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Justonepixel.com - Playing with D3js and RethinkDB</title>
+        
+        <meta name="author" content="Michel">
+
+        <!-- Enable responsive viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+
+        <!-- atom & rss feed -->
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    </head>
+
+    <body>
+    <div class="wrapper container">
+    <div class="row">
+        <div class="span1 offset1">
+            <div class="navbar">
+                <ul>
+                    <li><a href="/"><img src="/assets/themes/justonepixel/img/home.png" /></a></li>
+                    <li><a href="/about.html"><img src="/assets/themes/justonepixel/img/about.png" /></a></li>
+                    <li><a href="/contact.html"><img src="/assets/themes/justonepixel/img/contact.png" /></a></li>
+                    <li><a href="/archive.html"><img src="/assets/themes/justonepixel/img/archive.png" /></a></li>
+                    <li><a href="/search.html"><img src="/assets/themes/justonepixel/img/search.png" /></a></li>
+                    <li><a href="https://github.com/neumino"><img src="/assets/themes/justonepixel/img/github.png" /></a></li>
+                    <li><a href="http://www.strava.com/athletes/1952902"><img src="/assets/themes/justonepixel/img/strava.png" /></a></li>
+                    <li><a href="https://twitter.com/neumino"><img src="/assets/themes/justonepixel/img/twitter.png" /></a></li>
+                    <li><a href="https://www.facebook.com/michel.tu"><img src="/assets/themes/justonepixel/img/facebook.png" /></a></li>
+                    <li><a href="http://www.linkedin.com/in/tumichel"><img src="/assets/themes/justonepixel/img/linkedin.png" /></a></li>
+                    <li><a href="https://plus.google.com/u/0/111745051853861893359/posts"><img src="/assets/themes/justonepixel/img/googleplus.png" /></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="span9">
+
+            <div class="content">
+                
+
+<div class="post">
+<i class="icon-post"></i>
+
+    <h2>
+        <a href="/geek/2013/06/17/d3js-and-rethinkdb" class="title">Playing with D3js and RethinkDB</a>
+        <span class="meta_info">posted on 17 June 2013</span>
+    </h2>
+
+    
+<p>Here is my last week end project.</p>
+
+<ul>
+  <li><a href="http://justonepixel.com/projects/tomatoesfridge/index.html">Demo</a></li>
+  <li><a href="https://github.com/neumino/tomatoesfridge">Source code</a></li>
+</ul>
+
+<p>This project has three purposes/reasons:</p>
+
+<ul>
+  <li>Kill time</li>
+  <li>Play with <a href="http://www.rethinkdb.com">RethinkDB</a>’s python driver</li>
+  <li>Draw cool stuff with <a href="http://www.d3js.org">D3.js</a></li>
+</ul>
+
+<p>The project is about drawing a graph of similar movies. The users can expand the graph by clicking on a node. Because I am limited to 10 requests per second, I though it wouldn’t be stupid to cache things. Instead of caching things in memory with a home-made memcached, I though it would funnier to use RethinkDB.</p>
+
+<p>So here is what happens every time a user ask for some data</p>
+
+<ul>
+  <li>We check if we have the data in the database</li>
+  <li>If we do, we just return the results</li>
+  <li>If we don’t, we fetch some data from rottentomatoes, dump it in RethinkDB and send it back to the user.</li>
+</ul>
+
+<p>The main components of the used stack are <a href="flask.pocoo.org">Flask</a>, <a href="http://www.rethinkdb.com">RethinkDB</a> and <a href="http://www.d3js.org">D3.js</a>. There are some secondaries components too like <a href="www.cherrypy.org">Cherrypy</a>, <a href="twitter.github.com/bootstrap/">Bootstrap</a> and <a href="http://jquery.com/">Jquery</a>.</p>
+
+<p>I would note two things from this project</p>
+
+<ul>
+  <li>While the force layout always converge to a “good” representation, it is quite unstable during the first ticks. I tried to tweak a little the algorithm to make it less oscillating at the begining, but could not do it to a certain point.</li>
+  <li>It’s pretty cool to write queries like</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">movie</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s">"movie"</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">id_movie</span><span class="p">)</span><span class="o">.</span><span class="n">do</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">movie</span><span class="p">:</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">branch</span><span class="p">(</span>
+        <span class="c"># If we didn't find the movie or didn't find the similar movies</span>
+        <span class="p">(</span><span class="n">movie</span> <span class="o">==</span> <span class="bp">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="o">~</span><span class="n">movie</span><span class="o">.</span><span class="n">has_fields</span><span class="p">(</span><span class="s">"similar_movies_id"</span><span class="p">)),</span> 
+        <span class="c"># We just return the movie/None</span>
+        <span class="n">movie</span><span class="p">,</span>
+        <span class="c"># Else we add a field similar_movies with the relevant data</span>
+        <span class="n">movie</span><span class="o">.</span><span class="n">merge</span><span class="p">({</span>
+            <span class="s">"similar_movies"</span><span class="p">:</span> <span class="n">movie</span><span class="p">[</span><span class="s">"similar_movies_id"</span><span class="p">]</span><span class="o">.</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">similar_movie_id</span><span class="p">:</span>
+                <span class="n">r</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s">"movie"</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">similar_movie_id</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">})</span>
+    <span class="p">))</span><span class="o">.</span><span class="n">run</span><span class="p">(</span> <span class="n">g</span><span class="o">.</span><span class="n">rdb_conn</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>I have started to implement the search feature, but I’ll leave it as it is I think. I have other cool idea in my mind :-)</p>
+
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-folder-open"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/categories.html#Geek-ref">
+    		Geek <span>43</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+      
+
+    
+    <ul class="tag_box inline">
+        <li><i class="icon-tags"></i></li>
+        
+        
+
+
+  
+     
+    	<li><a href="/tags.html#d3js-ref">d3js <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#rethinkdb-ref">rethinkdb <span>21</span></a></li>
+     
+    	<li><a href="/tags.html#graph-ref">graph <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#visualization-ref">visualization <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#rottentomatoes-ref">rottentomatoes <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+      
+
+    
+    <hr>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog.justonepixel.com -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:468px;height:60px"
+     data-ad-client="ca-pub-5366199723595534"
+     data-ad-slot="2620298801"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <hr>
+    <div class="pagination">
+        <ul>
+            
+            <li class="prev"><a href="/life/2013/06/16/pancakes-mt-tam" title="Pancakes on Mt. Tamalpais">&larr; Previous</a></li>
+            
+            <li><a href="/archive.html">Archive</a></li>
+            
+            <li class="next"><a href="/geek/2013/07/30/blog-example-with-thinky" title="Blog example with Thinky">Next &rarr;</a></li>
+            
+        </ul>
+    </div>
+    <hr>
+</div>
+
+
+            </div>
+
+            <footer>
+                <p>Michel Tu
+                &mdash;
+                <a href="mailto:michel@justonepixel.com">michel@justonepixel.com</a>
+                &mdash;
+                <a href="http://blog.justonepixel.com">http://blog.justonepixel.com</a></p>
+            </footer>
+
+        </div>
+    </div>
+    </div>
+    <noscript id="deferred-styles">
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/bootstrap/css/bootstrap.2.2.2.min.css"/>
+      <link rel="stylesheet" type="text/css" href="/assets/themes/justonepixel/css/style.css?body=1"/>
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+		
+    </body>
+</html>
+
