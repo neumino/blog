@@ -13,7 +13,8 @@ another.
 ### Solution with an example.
 
 Suppose your schema for the table `user` is:
-```js
+
+```bash
 {
   id: <string>,
   country: <string>,
