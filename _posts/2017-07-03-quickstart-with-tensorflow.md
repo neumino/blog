@@ -1,7 +1,7 @@
 ---
 layout: post
 category : Geek
-tags : [rethinkdb, index]
+tags : [tensorflow, python, quickstart]
 title: Quick start with tensorflow
 ---
 {% include JB/setup %}
