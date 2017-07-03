@@ -10,7 +10,8 @@ This is a simple example of running a linear regression on a vector space with
 more than one dimension.
 
 The main take away on my end is that the `*` operator is overwritten with the
-product between tensors, not matrices. Hopefully if you did study a lot of
+product between tensors, not matrices - if you think about how training is done
+with batches, it totally make sense though.. Hopefully if you did study a lot of
 linear algebra but not so much tensors, you won't have to waste time trying to
 figure out why your regression converge to such weird values.
 
