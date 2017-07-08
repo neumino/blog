@@ -69,7 +69,7 @@ console.log(foo()) // Prints 4.
 ```
 
 * Fat arrows are a nice touch to make JavaScript more similar to other languages,
-and probably makes JavaScript more accessible. That being said, it doesn't
+and probably makes it more accessible. That being said, it doesn't
 reduce the total complexity around `this` and just add a new way to think about
 when evaluating `this`.
 
