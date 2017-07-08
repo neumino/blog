@@ -150,3 +150,8 @@ blockquote p{
 .adhr {
   border-bottom: 1px dotted #999;
 }
+
+code.highlighter-rouge{
+  background: #f4f4f4;
+  padding: 3px;
+}
