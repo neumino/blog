@@ -6,12 +6,13 @@ title: Eventually trying ES6
 ---
 {% include JB/setup %}
 
-I have written some JavaScript code in the past, but still haven't
-really use any ES6 features for a few different reasons:
+I have written some JavaScript code in the past and still do, but I still
+haven't really use any ES6 features for a few different reasons:
 
-- I felt like most of the people jumped to ES6 because it was the new shiny
-thing - This is very similar to people using MongoDB because it's web scale, or
-React because the DOM is slow. For example as a maintainer of
+- I feel like most of the people jumped to ES6 because it was the new shiny
+thing - but without undertanding the differences.. This is very similar to
+people using MongoDB because it's web scale, or React because the DOM is slow.
+For example as a maintainer of
 [thinky](https://github.com/neumino/thinky), I had to
 [deal](https://github.com/neumino/thinky/issues/399) 
 [with](https://github.com/neumino/thinky/issues/351)
@@ -24,9 +25,9 @@ JavaScript more Java/CoffeeScript like, and I personally find JavaScript's
 paradigm pleasant to use (though I would probably not use it to build a company).
 
 Anyway, as things changed, I looked a bit at all the new features, and here's a
-quick post about what I found interesting or sneaky (I'll skip generators,
+quick post about what I found interesting/sneaky. I'll skip generators,
 typed arrays and a few other features that I happened to have already used in
-the past).
+the past.
 
 * Constants are "easier" to create (not sure if anyone was going through the
 pain of doing so with ES5).
