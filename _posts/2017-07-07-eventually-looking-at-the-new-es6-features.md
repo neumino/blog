@@ -2,7 +2,7 @@
 layout: post
 category : Geek
 tags : [tensorflow, python, quickstart]
-title: Eventually trying ES6
+title: Eventually looking at the new ES6 features
 ---
 {% include JB/setup %}
 
