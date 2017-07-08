@@ -24,7 +24,7 @@ JavaScript more Java/CoffeeScript like, and I personally find JavaScript's
 paradigm pleasant to use (though I would probably not use it to build a company).
 
 Anyway, as things changed, I looked a bit at all the new features, and here's a
-quite write up of what I found interesting or sneaky (I'll skip generators,
+quick post about what I found interesting or sneaky (I'll skip generators,
 typed arrays and a few other features that I happened to have already used in
 the past).
 
