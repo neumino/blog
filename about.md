@@ -10,7 +10,9 @@ working for Google (previously at [RethinkDB](http://www.rethinkdb.com)) after
 graduating from [Tsinghua](http://www.tsinghua.edu.cn/publish/newthuen/)
 (Beijing) and [Ecole Centrale Paris](http://www.ecp.fr/).
 
-This is a little blog that I use to write down personal notes and other random thoughts.
+This is a little blog that I use to write down personal notes and other random
+thoughts. None of the content is sponsored/endorsed by my employer (or ex
+employer).
 
 The blog is built with [Jekyll](http://jekyllrb.com/) (and [JekyllBootstrap](http://jekyllbootstrap.com/)),
 [iconmonstr](http://iconmonstr.com) and is hosted on [Github](http://github.com).
