@@ -6,9 +6,16 @@ title: Building Magenta on Archlinux
 ---
 {% include JB/setup %}
 
-I have been a bit curious about Fuchsia/Magenta and decided to poke a bit
-around. Here are a quick notes on how to build it on Arch. These instructions
-assume you have the usual tools like `base-devel`.
+I have been a bit curious about Fuchsia/Magenta. From the README:
+
+_Magenta is the core platform that powers the Fuchsia OS. Magenta is composed of
+a microkernel (source in kernel/...) as well as a small set of userspace
+services, drivers, and libraries (source in system/...) necessary for the
+system to boot, talk to hardware, load userspace processes and run them, etc.
+Fuchsia builds a much larger OS on top of this foundation._
+
+I decided to poke a bit around. Here are a quick notes on how to build it on
+Arch. These instructions assume you have the usual tools like `base-devel`.
 
 The canonical git repository is at
 [https://fuchsia.googlesource.com/magenta](https://fuchsia.googlesource.com/magenta).
