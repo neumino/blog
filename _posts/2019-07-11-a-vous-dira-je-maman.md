@@ -18,7 +18,10 @@ Moi je dis que les bonbons
 Valent mieux que la raison.
 ```
 
-The version I heard as a child that I couldn't find anywhere on the Internet is:
+The version that my mother sang to me as a child is slightly different. One of
+my preschool teacher (Roselyne) taught it to my parents. Since I couldn't find
+it on the Internet, I thought it would be interesting to write it down for
+future generations.
 
 ```
 Ah ! Vous dirai-je maman
