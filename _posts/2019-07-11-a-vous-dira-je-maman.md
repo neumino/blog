@@ -18,14 +18,14 @@ Moi je dis que les bonbons
 Valent mieux que la raison.
 ```
 
-The version that my mother sang to me as a child is slightly different. One of
-my preschool teacher (Roselyne) taught it to my parents. Since I couldn't find
-it on the Internet, I thought it would be interesting to write it down for
-future generations.
+The version that I remember from my youth is slightly different. One of my
+preschool teacher (Roselyne) taught this version such that we could sing it at
+home for Mother's day. Since I couldn't find it on the Internet, I thought it
+would be interesting to write it down for future generations.
 
 ```
 Ah ! Vous dirai-je maman
-Que je t'aime tendrement
+Ce que je t'aime tendrement
 Les bonbons et les images
 Mais aussi les grand tapages
 Mais c'est encore bien plus doux
