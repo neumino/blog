@@ -16,8 +16,9 @@ It is great.
 
 As the world is moving to mobile first, sometimes browsers are being ignored.
 ChromeOS let's you install/use any Android App, meaning that you are likely
-always going to have the app you care about. On my end there are two use
-cases that I really enjoy
+always going to have the app you care about. On the other hand, if there is no
+Android app (or if you cannot use it), you can just create a shortcut on Chrome
+that feels like an app. On my end there are two use cases that I really enjoy:
 
 - I can use the Nanit android app to keep an eye on my daughter while she's sleeping
 - I can create a WhatsApp shortcut (feels like an app) such that I can use WhatsApp
