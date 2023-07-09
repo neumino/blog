@@ -6,7 +6,8 @@ title: Windows not found by os-prober
 ---
 {% include JB/setup %}
 
-I recently bought a new computer. When installing archlinux, I couldn't get
+I recently bought a new computer (a Lenovo IdeaCentre G5 in case someone is
+curious). When installing archlinux (in dual boot), I couldn't get
 `os-prober` to detect Windows even though I could see all the Windows file in
 `/boot/EFI/...`.
 
