@@ -1,7 +1,7 @@
 ---
 layout: post
 category : Growing as an engineer
-tags : [softwareengineering vision leadership data]
+tags : [softwareengineering, vision, leadership, data]
 title: Moving with vision
 ---
 {% include JB/setup %}

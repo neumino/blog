@@ -1,7 +1,7 @@
 ---
 layout: post
 category : Growing as an engineer
-tags : [softwareengineering worklifebalance promotion stress responsibilities]
+tags : [softwareengineering, worklifebalance, promotion, stress, responsibilities]
 title: Growing and its cost on work life balance
 ---
 {% include JB/setup %}

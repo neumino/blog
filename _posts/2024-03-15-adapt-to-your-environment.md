@@ -1,7 +1,7 @@
 ---
 layout: post
 category : Growing as an engineer
-tags : [softwareengineering seniorengineer coding growthtips]
+tags : [softwareengineering, seniorengineer, coding, growthtips]
 title: Adapt to your environment
 ---
 {% include JB/setup %}

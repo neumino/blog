@@ -1,7 +1,7 @@
 ---
 layout: post
 category : Growing as an engineer
-tags : [softwareengineering reading growth books]
+tags : [softwareengineering, reading, growth, books]
 title: Reading is not enough
 ---
 {% include JB/setup %}

@@ -1,7 +1,7 @@
 ---
 layout: post
 category : Growing as an engineer
-tags : [softwareengineering marketing celebrate promote naming]
+tags : [softwareengineering, marketing, celebrate, promote, naming]
 title: Market your work
 ---
 {% include JB/setup %}

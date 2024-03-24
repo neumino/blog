@@ -1,7 +1,7 @@
 ---
 layout: post
 category : Incomplete thoughts
-tags : [privacy anonymity regulations consent softwareengineering]
+tags : [privacy, anonymity, regulations, consent, softwareengineering]
 title: Anonymization of data is misleading
 ---
 {% include JB/setup %}

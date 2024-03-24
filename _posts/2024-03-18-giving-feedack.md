@@ -1,7 +1,7 @@
 ---
 layout: post
 category : Growing as an engineer
-tags : [softwareengineering feedback growth mentorship]
+tags : [softwareengineering, feedback, growth, mentorship]
 title: Giving feedback
 ---
 {% include JB/setup %}
