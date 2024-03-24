@@ -2,7 +2,7 @@
 layout: post
 category : Growing as an engineer
 tags : [softwareengineering, rejection, OK] 
-title: t’s OK to be rejected
+title: It’s OK to be rejected
 ---
 {% include JB/setup %}
 
