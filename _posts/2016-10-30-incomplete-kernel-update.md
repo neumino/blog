@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Geek
+category : Tinkering
 tags : [archlinux, kernel, encryption, disk]
 title: Incomplete kernel update
 ---
