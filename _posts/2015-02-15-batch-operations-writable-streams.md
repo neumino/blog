@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Geek
+category : Tinkering
 tags : [nodejs, iojs, writable, transform, streams, rethinkdbdash]
 title: "Batching operations in Node.js writable streams"
 ---
