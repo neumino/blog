@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Geek
+category : Tinkering
 tags : [xsecurelock, google, systemd]
 title: Lock with XSecureLock after suspend
 ---
