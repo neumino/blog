@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Hot take
 tags : [softwareengineering, ai, copilot]
 title: AI will partially replace software engineers 
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Hot take
 tags : [softwareengineering, sprint, teammanagement] 
 title: Two weeks sprints are terrible, period
 ---

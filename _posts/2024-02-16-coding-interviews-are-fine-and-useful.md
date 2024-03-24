@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Hot take
 tags : [softwareengineering, coding, interview, leet, code, hackerrank] 
 title: Coding interviews are fine and useful
 ---
