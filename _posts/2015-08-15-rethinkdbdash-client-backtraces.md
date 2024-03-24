@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Geek
+category : Tinkering
 tags : [thinky, relation, rethinkdb]
 title: "Rethinkdbdash and client side backtraces"
 ---

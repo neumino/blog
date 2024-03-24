@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Geek
+category : Tinkering
 tags : [linux, archlinux, dual-boot]
 title: Windows not found by os-prober
 ---
