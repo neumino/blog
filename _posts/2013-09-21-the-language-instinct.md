@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Thoughts
+category : Incomplete thoughts
 tags : [language, instinct]
 title: The Language Instinct - How the Mind Creates Language
 ---
@@ -12,7 +12,6 @@ by Steven Pinker.
 It is a fascinating book that presents some quite interesting theories and facts
 about language that I was not aware of - I for example, never thought of language
 as a human instinct,
-
 
 Being a non native English speaker, some examples were a little tricky to get,
 but overall the book is easy to read, full of examples, and just too engaging
