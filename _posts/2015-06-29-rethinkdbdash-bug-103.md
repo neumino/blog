@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Geek
+category : Tinkering
 tags : [rethinkdbdash, nodejs, bug]
 title: "Rethinkdbdash bug #103"
 ---
