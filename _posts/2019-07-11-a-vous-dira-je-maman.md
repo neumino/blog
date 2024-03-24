@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Life
+category : Other
 tags : []
 title: Ah ! Vous dirai-je maman
 ---
