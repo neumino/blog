@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Geek
+category : Tinkering
 tags : [nginx, proxy, proxy_pass, redirect, localhost]
 title: Proxy pass with nginx redirects to localhost
 ---
