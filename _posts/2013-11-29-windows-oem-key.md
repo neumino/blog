@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Geek
+category : Tinkering
 tags : [windows, oem, key, retail]
 title: Reinstalling Windows 8 with an OEM key
 ---
