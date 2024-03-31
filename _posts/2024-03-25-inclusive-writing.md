@@ -6,9 +6,6 @@ title: Use inclusive writing
 ---
 {% include JB/setup %}
 
-
-Hot take: 
-
 Inclusive writing is often frowned upon by far too many people:
 
 1. Those who have something against the people being included
