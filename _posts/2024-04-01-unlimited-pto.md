@@ -2,7 +2,7 @@
 layout: post
 category : Growing as an engineer
 tags : [softwareengineering, pto, vacation, timeoff]
-title: It's OK to leave
+title: Unlimited PTO
 ---
 {% include JB/setup %}
 
