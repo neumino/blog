@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Growing as an engineer
 tags : [softwareengineering, growth, career, faang, manga]
 title: Joining FAANG and other top tier companies
 ---
@@ -19,4 +19,4 @@ My advice, which might not be the one people want to hear, is to not focus on jo
 
 To close this post, I went to a YC startup for 2.5 years before joining Google. I had an amazing time there and I learned a lot. I have no regrets starting my career there it gave me a lot of valuable insights and experience.
 
-[LinkedIn post](https://www.linkedin.com/posts/tumichel_softwareengineering-jobhopping-promotion-activity-7181304467919671296-8lm1?utm_source=share&utm_medium=member_desktop)
+[LinkedIn post](https://www.linkedin.com/posts/tumichel_softwareengineering-growth-career-activity-7181666874085031938-naHI?utm_source=share&utm_medium=member_desktop)
