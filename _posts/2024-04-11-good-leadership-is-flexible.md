@@ -2,7 +2,7 @@
 layout: post
 category : Growing as an engineer
 tags : [softwareengineering, leadership, TL, adapt, flexible]
-title: The properties matter more than the name
+title: Good leadership is flexible 
 ---
 {% include JB/setup %}
 
