@@ -2,7 +2,7 @@
 layout: post
 category : Growing as an engineer
 tags : [softwareengineering, 3p, software, opensource, security]
-title: The properties matter more than the name
+title: You shouldn't use third party software
 ---
 {% include JB/setup %}
 
