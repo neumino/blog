@@ -2,7 +2,7 @@
 layout: post
 category : Growing as an engineer
 tags : [softwareengineering, leadership, TL, adapt, flexible]
-title: The properties matter more than the name
+title: Finding a good manager is the most important 
 ---
 {% include JB/setup %}
 
