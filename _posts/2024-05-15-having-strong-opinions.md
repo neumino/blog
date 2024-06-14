@@ -2,7 +2,7 @@
 layout: post
 category : Growing as an engineer
 tags : [softwareengineering, opinion, principle, toomanycooks]
-title: TDD is not enough (or not for what matters the most)
+title: Having strong opinions
 ---
 {% include JB/setup %}
 

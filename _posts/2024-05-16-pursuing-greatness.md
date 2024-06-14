@@ -2,7 +2,7 @@
 layout: post
 category : Growing as an engineer
 tags : [softwareengineering, greatness, journey, chase, hungry]
-title: TDD is not enough (or not for what matters the most)
+title: Pursuing greatness
 ---
 {% include JB/setup %}
 
