@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Hot take
 tags : [softwareengineering, killedbygoogle, product, shutdown]
 title: Google killing non successful products is the right move
 ---
