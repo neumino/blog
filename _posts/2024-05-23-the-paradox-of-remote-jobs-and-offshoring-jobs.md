@@ -2,7 +2,7 @@
 layout: post
 category : Growing as an engineer
 tags : [softwareengineering, job, offshore, remote, opportunities]
-title: The benefits of doing things well
+title: The paradox of remote jobs and offshoring jobs
 ---
 {% include JB/setup %}
 
