@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [softwareengineering, google, layoff, python, golang]
 title: Google laying off its python team
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [softwareengineering, worklifebalance, wlb, happynewyear] 
 title: Health mind in a healthy body
 ---

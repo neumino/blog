@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [softwareengineering, income, precarity]
 title: The paradox of high income and financial
 ---

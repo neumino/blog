@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [softwareengineering, AI, mirror, humanity] 
 title: AI isn’t the mirror of humanity
 ---

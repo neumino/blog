@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts 
+category : Incomplete-thoughts 
 tags : [internationalwomensday, biasawareness, softwareengineering, genderequality]
 title: Happy International Women's Day!
 ---

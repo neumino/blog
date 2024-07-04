@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [softwareengineering, hiring, recruiting, bias]
 title: Biases in recruiting
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [softwareengineering, privacy, ai, regulations] 
 title: Introductin to privacy AI
 ---

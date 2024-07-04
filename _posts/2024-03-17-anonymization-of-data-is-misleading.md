@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [privacy, anonymity, regulations, consent, softwareengineering]
 title: Anonymization of data is misleading
 ---

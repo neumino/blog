@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [softwareengineering, privacy, encryption, local, remote]
 title: Microsoft AI feature’s privacy fiasco
 ---

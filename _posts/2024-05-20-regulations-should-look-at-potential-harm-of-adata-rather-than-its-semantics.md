@@ -1,12 +1,12 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [softwareengineering, data, ai, risk, harm, regulation]
 title: Regulations should look at potential harm of data rather than its semantics
 ---
 {% include JB/setup %}
 
-Incomplete thoughts: Regulations should look at potential harm of data rather than its semantics
+Incomplete-thoughts: Regulations should look at potential harm of data rather than its semantics
 
 Today privacy laws regulate data based on their “sensitivity” (e.g. ethnicity, religion, gender etc.). One large issue with this approach is that systems today can infer (e.g. with AI) sensitive attributes of a person with mundane data, allowing them to operate without being constrained by most regulations.
 

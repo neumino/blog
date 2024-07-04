@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [softwareengineering, ai, machinelearning, predictions, regulations]
 title: Concerns around AI predictions
 ---

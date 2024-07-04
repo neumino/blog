@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [softwareengineering, privacy, inferred, data, personal] 
 title: Inferred data should be regulated similarly as collected data
 ---

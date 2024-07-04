@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [language, instinct]
 title: The Language Instinct - How the Mind Creates Language
 ---

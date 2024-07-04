@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Incomplete thoughts
+category : Incomplete-thoughts
 tags : [softwareengineering, coding, interview, leet, code, hackerrank] 
 title: Layoffs are killing innovation in companies (and eventually the companies themselves)
 ---
