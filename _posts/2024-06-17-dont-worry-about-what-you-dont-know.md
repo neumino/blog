@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, growth, dontworry, learn]
 title: Don't worry about what you don't know
 ---

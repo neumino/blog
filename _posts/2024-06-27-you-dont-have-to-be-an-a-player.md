@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, hiring, raisethebar, growth]
 title: You don’t have to be an A player
 ---

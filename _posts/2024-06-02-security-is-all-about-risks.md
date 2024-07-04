@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, security, risk, balance, infrastructure]
 title: Security is all about risk
 ---

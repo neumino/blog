@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, tinker, tools, hack, environement] 
 title: t’s OK to be rejected
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, job, offshore, remote, opportunities]
 title: The paradox of remote jobs and offshoring jobs
 ---

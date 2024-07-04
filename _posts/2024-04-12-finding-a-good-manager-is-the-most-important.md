@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, leadership, TL, adapt, flexible]
 title: Finding a good manager is the most important 
 ---

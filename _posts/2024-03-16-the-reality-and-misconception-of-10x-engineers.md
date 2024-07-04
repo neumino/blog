@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering 10x productivity growing seniorengineer]
 title: The reality and misconception of 10x engineers
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, announcement, toxic, behavior]
 title: The toxicity of asking for announcements
 ---

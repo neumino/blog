@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, oncall, quiet, sleep, worklifebalance] 
 title: Oncall rotations should be quiet
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, help, fix, itsupport, tshape]
 title: Being asked to fix computers
 ---

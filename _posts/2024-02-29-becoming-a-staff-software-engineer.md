@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, careerdevelopment, growthtips, promotion]
 title: Becoming a staff software engineer
 ---

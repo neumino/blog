@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, infrastructure, consistency, stability, horizontal]
 title: Consistency in large infrastructure
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, manager, job, IC] 
 title: Becoming a manager is changing job, not getting a promotion
 ---

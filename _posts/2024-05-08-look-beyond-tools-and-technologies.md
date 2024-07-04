@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, why, mindset, tools, problems]
 title: Look beyond tools and technologies
 ---

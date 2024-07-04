@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, cut, corner, speed, marathon] 
 title: Don’t always cut corners
 ---

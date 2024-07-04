@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, promotion, growth, junior, advice]
 title: You don't have to overthink too much as a junior engineer
 ---

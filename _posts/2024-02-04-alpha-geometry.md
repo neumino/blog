@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, ai, deepmind, google, alphageometry, math] 
 title: Alphageometry capabilities
 ---

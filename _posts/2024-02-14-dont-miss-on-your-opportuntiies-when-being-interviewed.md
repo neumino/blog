@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, interview, question, returntosender] 
 title: Don’t miss on your opportunities when being interviewed
 ---

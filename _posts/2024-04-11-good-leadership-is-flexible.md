@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, leadership, TL, adapt, flexible]
 title: Good leadership is flexible 
 ---

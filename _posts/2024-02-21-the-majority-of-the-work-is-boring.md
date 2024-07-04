@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, boring, tedious, notinteresting, work] 
 title: The majority of the work is boring
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, promotion, growth, visiblework, infrastructure]
 title: The hidden and misunderstood work
 ---

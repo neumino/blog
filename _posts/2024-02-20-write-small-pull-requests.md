@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, small, pull, request, breakdown] 
 title: Write small pull requests
 ---

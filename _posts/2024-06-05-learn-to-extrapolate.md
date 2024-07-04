@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, growth, extrapolate, skill]
 title: Learn to extrapolate
 ---

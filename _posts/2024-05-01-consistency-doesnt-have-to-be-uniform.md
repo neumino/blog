@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, growth, effort, consistency]
 title: Consistency doesn’t have to be uniform
 ---

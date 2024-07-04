@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, debugging, experience, speed]
 title: You can’t just compare outcomes
 ---

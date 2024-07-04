@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, side, project, journey, moonlighting] 
 title: Side projects are about the journey, not the results
 ---

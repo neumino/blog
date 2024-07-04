@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, promotion, level, jobhunting]
 title: Get promoted before switching job
 ---

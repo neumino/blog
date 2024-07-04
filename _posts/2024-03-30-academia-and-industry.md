@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, school, industry, academia, growth]
 title: Choosing between academia and the industry
 ---

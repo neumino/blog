@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, culturaldifferences, growthtips]
 title: Adjusting to American peers
 ---

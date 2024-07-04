@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, investinyourself, tools, automation]
 title: Create shortcuts, learn tools and build muscle memory
 ---

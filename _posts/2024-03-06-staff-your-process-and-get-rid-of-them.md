@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, process, operationalexcellence]
 title: Staff your processes and get rid of them
 ---

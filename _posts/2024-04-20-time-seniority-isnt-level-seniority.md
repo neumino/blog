@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, seniority, level, cruising]
 title: Time seniority != Level seniority
 ---

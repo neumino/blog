@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, trendy, follow]
 title: Don’t blindly jump into what’s hot
 ---

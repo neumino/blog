@@ -1,12 +1,12 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, system, design, api, component]
 title: You must learn to think in terms of components and APIs
 ---
 {% include JB/setup %}
 
-Growing as an engineer: You must learn to think in terms of components and APIs
+Growing-as-an-engineer: You must learn to think in terms of components and APIs
 
 One difference between writing code at school and writing school in the industry is that as a software engineer, you simply cannot deeply understand every single part of the system you work on. The only way for you to be efficient is to be able to build a mental model of how your system works with high level components and their APIs.
 

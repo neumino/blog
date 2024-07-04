@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, metric, number, bias, interpretation]
 title: The meaning behind numbers
 ---

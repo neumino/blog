@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, timezones, madness, weekendwisdom]
 title: Run away from time representations (and timezones)
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, impostersyndrome, growing, knowledgesharing]
 title: You don't need to know everything
 ---

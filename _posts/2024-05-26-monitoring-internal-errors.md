@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, error, monitoring, internal, invariant]
 title: Monitoring internal errors 
 ---

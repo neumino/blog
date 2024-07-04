@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, idea, controversial, onepager]
 title: Executing large controversial ideas
 ---

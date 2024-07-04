@@ -1,13 +1,13 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, work, life, wlb, worklifebalance, happiness]
 title: Work life balance isn’t just about hours
 ---
 {% include JB/setup %}
 
 
-Growing as an engineer: Work life balance isn’t just about hours
+Growing-as-an-engineer: Work life balance isn’t just about hours
 
 There are often two misconceptions I hear about work life balance (WLB):
 

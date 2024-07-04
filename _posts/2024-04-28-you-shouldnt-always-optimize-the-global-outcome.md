@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, edgecase, prioritization, worstcase, userjourney]
 title: You shouldn’t always optimize for the global outcome
 ---

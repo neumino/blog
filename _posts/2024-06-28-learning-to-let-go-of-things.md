@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, delegating, letitgo, growth]
 title: Learning to let go of things
 ---

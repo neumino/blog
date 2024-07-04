@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, skill, interview, resume]
 title: The skills section shouldn’t be at the top of your resume
 ---

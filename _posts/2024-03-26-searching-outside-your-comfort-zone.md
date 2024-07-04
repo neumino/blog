@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, comfort, challenge, light]
 title: Searching outside your comfort zone
 ---

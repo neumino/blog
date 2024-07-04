@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, privacy, infrastructure, compliance, security]
 title: What’s privacy infrastructure?
 ---

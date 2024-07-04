@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Growing as an engineer
+category : Growing-as-an-engineer
 tags : [softwareengineering, simple, userjourney, noknobs]
 title: Build simple stuff for normal people
 ---
