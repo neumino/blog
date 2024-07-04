@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Hot-take
 tags : [softwareengineering, promo, peer, senior]
 title: Having senior peers is not what prevent you from getting promoted
 ---

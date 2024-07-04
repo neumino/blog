@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Hot-take
 tags : [softwareengineering, data, semantics, baddata, techdebt]
 title: Data suffers the most from software engineering technical debt
 ---

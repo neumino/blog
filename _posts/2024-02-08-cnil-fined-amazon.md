@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Privacy news
+category : Privacy-news
 tags : [softwareengineering, cnil, amazon, privacy] 
 title: The CNIL fined Amazon
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Hot-take
 tags : [softwareengineering, vim, emacs, editor] 
 title: You should become proficient in vim or emacs
 ---

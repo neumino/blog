@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Hot-take
 tags : [softwareengineering, culture, nojerk, toxic]
 title: No jerks, no exceptions
 ---

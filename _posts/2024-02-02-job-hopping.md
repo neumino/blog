@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Hot-take
 tags : [softwareengineering, job, hopping] 
 title: You should be thoughtful when job hopping
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Hot-take
 tags : [softwareengineering, frontend, backend, stateful, stateless]
 title: Backend engineers who look down on frontend engineers are wrong and short sighted
 ---

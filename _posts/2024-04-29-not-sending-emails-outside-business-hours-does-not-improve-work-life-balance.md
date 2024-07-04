@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Hot-take
 tags : [softwareengineering, worklifebalance, notification, boundaries]
 title: Not sending emails outside business hours doesn’t improve work life balance
 ---

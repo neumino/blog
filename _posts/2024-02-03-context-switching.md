@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Hot-take
 tags : [softwareengineering, context, switching, growth] 
 title: You should be able to context switch with zero cost
 ---

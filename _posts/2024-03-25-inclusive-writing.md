@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Hot-take
 tags : [softwareengineering, inclusivewriting, bias]
 title: Use inclusive writing
 ---

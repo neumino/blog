@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Hot-take
 tags : [softwareengineering, jobhopping, promotion, level, title]
 title: You aren’t getting promoted when switching companies
 ---

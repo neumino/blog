@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Hot-take
 tags : [softwareengineering, performance, pip, improvement, fired]
 title: PIPs aren't primarily meant to fire you
 ---

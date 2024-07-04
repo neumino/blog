@@ -1,6 +1,6 @@
 ---
 layout: post
-category : Hot take
+category : Hot-take
 tags : [softwareengineering, office, rto, wfh, wlb]
 title: Return to office
 ---
