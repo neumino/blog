@@ -2,7 +2,7 @@
 layout: post
 category : Growing-as-an-engineer
 tags : [softwareengineering, staycurious, openmind, worldsyoudontknowexist]
-title: Monitoring small slices
+title: Worlds you don't know exist
 ---
 {% include JB/setup %}
 
@@ -23,4 +23,4 @@ Similarly, there are worlds you discover only when working in specific industry,
 
 The main point of this post is that there are interesting things in the world – you may just not know they even exist. Keep an open mind, be ready to take a leap of faith and you will find something that you are interested in.
 
-[LinkedIn post](https://www.linkedin.com/posts/tumichel_softwareengineering-staycurious-openmind-activity-7229136505946996739-SCoq?utm_source=share&utm_medium=member_desktop
+[LinkedIn post](https://www.linkedin.com/posts/tumichel_softwareengineering-staycurious-openmind-activity-7229136505946996739-SCoq?utm_source=share&utm_medium=member_desktop)
