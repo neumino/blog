@@ -2,7 +2,7 @@
 layout: post
 category : Growing-as-an-engineer
 tags : [softwareengineering, refactor, techdebt]
-title: Automatically format your code
+title: Refactor as you see fit
 ---
 {% include JB/setup %}
 
